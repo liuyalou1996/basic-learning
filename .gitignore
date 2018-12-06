@@ -1,0 +1,12 @@
+target/classes/com/iboxpay/jdk8/streamOp/StreamOpTest.class
+target/classes/com/iboxpay/jdk8/methodref/MethodRefTest.class
+target/classes/com/iboxpay/jdk8/methodref/CarFactory.class
+target/classes/com/iboxpay/jdk8/methodref/Car.class
+target/classes/META-INF/maven/com.iboxpay/basic-learning/pom.xml
+target/classes/META-INF/maven/com.iboxpay/basic-learning/pom.properties
+target/classes/META-INF/MANIFEST.MF
+.settings/org.eclipse.m2e.core.prefs
+.settings/org.eclipse.jdt.core.prefs
+.settings/org.eclipse.core.resources.prefs
+.project
+.classpath

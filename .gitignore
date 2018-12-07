@@ -10,3 +10,4 @@ target/classes/META-INF/MANIFEST.MF
 .settings/org.eclipse.core.resources.prefs
 .project
 .classpath
+*.class

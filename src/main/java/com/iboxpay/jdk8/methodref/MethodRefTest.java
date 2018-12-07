@@ -4,29 +4,36 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-class Car {
+import com.iboxpay.jdk8.methodref.CarFactory.Car;
 
-  private String brand;
+interface MethodRef {
 
-  public String getBrand() {
-    return brand;
-  }
-
-  public void setBrand(String brand) {
-    this.brand = brand;
-  }
-
-  public void description() {
-    System.out.println("I'm a car.");
-  }
-
-  @Override
-  public String toString() {
-    return "Car [brand=" + brand + "]";
-  }
+  public String substring(String str, int start, int end);
 }
 
 class CarFactory {
+
+  public static class Car {
+
+    private String brand;
+
+    public String getBrand() {
+      return brand;
+    }
+
+    public void setBrand(String brand) {
+      this.brand = brand;
+    }
+
+    public void description() {
+      System.out.println("I'm a car.");
+    }
+
+    @Override
+    public String toString() {
+      return "Car [brand=" + brand + "]";
+    }
+  }
 
   public static void sell(Car car) {
     System.out.println("we are selling a high-performance car:" + car.getBrand() + ".");
@@ -43,7 +50,7 @@ class CarFactory {
 }
 
 /*
- *方法引用测试 
+ *当Lambda表达式语句只有一条时，可以使用方法引用，主要有构造器引用，实例方法引用，特定类的对象方法引用
  */
 public class MethodRefTest {
 
@@ -73,10 +80,12 @@ public class MethodRefTest {
   }
 
   /**
-   * 特定类的对象方法调用，不能带参数，由于list中存的是car，所以只能调用Car类对象的无参方法
+   * 特定类的对象方法调用，函数式接口的第一个参数为调用者，后面的参数作为调用者方法的参数
    */
-  public static void invokeGeneralInstanceMethod() {
-    carList.forEach(Car::description);
+  public static void invokeSpecifiedClassInstanceMethod() {
+    MethodRef methodRef = String::substring;
+    String str = methodRef.substring("abcdefg", 0, 3);
+    System.out.println(str);
   }
 
   /**
@@ -89,7 +98,7 @@ public class MethodRefTest {
   public static void main(String[] args) {
     invokeContructor();
     invokeStaticMethod();
-    invokeGeneralInstanceMethod();
+    invokeSpecifiedClassInstanceMethod();
     invokeInstanceMethod();
   }
 }

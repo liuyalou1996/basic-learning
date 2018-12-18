@@ -2,6 +2,7 @@ package com.iboxpay.ognl;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import ognl.Ognl;
 import ognl.OgnlContext;
 import ognl.OgnlException;
@@ -16,6 +17,13 @@ import ognl.OgnlException;
  * <p>
  */
 public class OgnlTest {
+
+  public static void compare() throws OgnlException {
+    OgnlContext context = new OgnlContext();
+    // OGNL比较机制与javascript中的比较机制一样，不同类型进行比较，先转换为boolean型，再作比较。数字0和空字符都为false
+    boolean flag = (boolean) Ognl.getValue("''==0", context, context.getRoot());
+    System.out.println(flag);
+  }
 
   public static void invokeStaticMethodAndVariable() throws Exception {
     OgnlContext context = new OgnlContext();
@@ -48,6 +56,7 @@ public class OgnlTest {
   }
 
   public static void main(String[] args) throws Exception {
+    compare();
     invokeStaticMethodAndVariable();
     invokeInstatnceMethod();
     invokeInstanceMethodFromRoot();

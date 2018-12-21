@@ -9,8 +9,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.iboxpay.fastjson.CollectionUtils;
@@ -27,8 +25,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class OkHttpUtils {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(OkHttpUtils.class);
 
   public static final MediaType JSON = MediaType.get("application/json;charset=utf-8");
 
@@ -101,11 +97,11 @@ public class OkHttpUtils {
 
   public static OkHttpResp sendPostWithKeyValue(String url, Map<String, Object> headers, Map<String, Object> params)
       throws IOException {
-    return sendPostWithKeyValue(url, headers, params, TIMEOUT);
+    return sendPostInHtmlForm(url, headers, params, TIMEOUT);
   }
 
   /**
-   * 发送post请求，请求参数格式为键值对
+   * 发送post请求，模仿html表单
    * @param url 请求地址
    * @param reqHeaders 请求头
    * @param params 请求参数
@@ -113,7 +109,7 @@ public class OkHttpUtils {
    * @return
    * @throws IOException
    */
-  public static OkHttpResp sendPostWithKeyValue(String url, Map<String, Object> reqHeaders, Map<String, Object> params,
+  public static OkHttpResp sendPostInHtmlForm(String url, Map<String, Object> reqHeaders, Map<String, Object> params,
       int timeout) throws IOException {
     if (StringUtils.isBlank(url)) {
       throw new IllegalArgumentException("request url can not be null");
@@ -123,7 +119,6 @@ public class OkHttpUtils {
     Request.Builder reqBuilder = new Request.Builder().url(url).addHeader("User-Agent", USER_AGENT);
     // 增加请求头
     addHeaders(reqHeaders, reqBuilder);
-
     FormBody.Builder formBuilder = new FormBody.Builder(Charset.forName("UTF-8"));
     FormBody formBody = formBuilder.build();
     // 添加请求参数
@@ -142,9 +137,9 @@ public class OkHttpUtils {
     return getResponse(url, client, request);
   }
 
-  public static OkHttpResp sendPostWithJson(String url, Map<String, Object> reqHeaders, Map<String, Object> params)
+  public static OkHttpResp sendPostInJson(String url, Map<String, Object> reqHeaders, Map<String, Object> params)
       throws IOException {
-    return sendPostWithJson(url, reqHeaders, params, TIMEOUT);
+    return sendPostInJsonFormat(url, reqHeaders, params, TIMEOUT);
   }
 
   /**
@@ -156,18 +151,16 @@ public class OkHttpUtils {
    * @return
    * @throws IOException
    */
-  public static OkHttpResp sendPostWithJson(String url, Map<String, Object> reqHeaders, Map<String, Object> params,
+  public static OkHttpResp sendPostInJsonFormat(String url, Map<String, Object> reqHeaders, Map<String, Object> params,
       int timeout) throws IOException {
     if (StringUtils.isBlank(url)) {
       throw new IllegalArgumentException("request url can not be null");
     }
 
     OkHttpClient client = getOkHttpClient(timeout);
-
     Request.Builder reqBuilder = new Request.Builder().url(url).addHeader("User-Agent", USER_AGENT);
     // 添加请求头
     addHeaders(reqHeaders, reqBuilder);
-
     // 添加请求参数
     RequestBody requestBody = RequestBody.create(JSON, JSONObject.toJSONString(params));
     if (CollectionUtils.isEmpty(params)) {
@@ -198,7 +191,6 @@ public class OkHttpUtils {
     OkHttpClient client = getOkHttpClient(timeout);
     MultipartBody.Builder multiBuilder = new MultipartBody.Builder();
     multiBuilder.setType(MultipartBody.FORM);
-
     if (!CollectionUtils.isEmpty(files)) {
       for (MultipartFile multipartFile : files) {
         String fieldName = multipartFile.getFieldName();
@@ -231,7 +223,6 @@ public class OkHttpUtils {
 
     OkHttpClient client = getOkHttpClient(timeout);
     Request request = new Request.Builder().url(url).addHeader("User-Agent", USER_AGENT).get().build();
-
     try (Response response = client.newCall(request).execute()) {
       if (!response.isSuccessful()) {
         return null;
@@ -239,7 +230,6 @@ public class OkHttpUtils {
 
       return response.body().bytes();
     } catch (IOException e) {
-      LOGGER.error("fail to establish the connection with {}", url, e);
       throw e;
     }
   }
@@ -262,7 +252,6 @@ public class OkHttpUtils {
       resp.setContentLength(body.contentLength());
       return resp;
     } catch (IOException e) {
-      LOGGER.error("fail to establish the connection with {}", url, e);
       throw e;
     }
   }
@@ -390,5 +379,11 @@ public class OkHttpUtils {
       this.successful = successful;
     }
 
+    @Override
+    public String toString() {
+      return "OkHttpResp [respStr=" + respStr + ", byteStream=" + byteStream + ", bytes=" + bytes + ", respHeaders="
+          + respHeaders + ", mediaType=" + mediaType + ", contentLength=" + contentLength + ", successful=" + successful
+          + "]";
+    }
   }
 }

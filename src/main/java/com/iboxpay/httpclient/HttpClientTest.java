@@ -1,27 +1,34 @@
 package com.iboxpay.httpclient;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.iboxpay.fastjson.JsonUtils;
+import com.iboxpay.okhttp.OkHttpUtils;
 
 public class HttpClientTest {
 
@@ -81,7 +88,27 @@ public class HttpClientTest {
     }
   }
 
+  public static void uploadFile() throws IOException {
+    HttpPost httpPost = new HttpPost("http://localhost:8080/wechat_public_platform/upload.json");
+    byte[] content = FileUtils.readFileToByteArray(new File("C:\\Users\\Public\\Pictures\\Pictures\\壁纸\\壁纸2.jpg"));
+    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+    // 注意：上传文件时文件名和表单域名都要传
+    builder.addBinaryBody("portrait", content, ContentType.APPLICATION_OCTET_STREAM, "image");
+    HttpEntity entity = builder.build();
+    httpPost.setEntity(entity);
+    try (CloseableHttpResponse response = (CloseableHttpResponse) httpClient.execute(httpPost)) {
+      int statusCode = response.getStatusLine().getStatusCode();
+      if (statusCode >= HttpStatus.SC_OK && statusCode < HttpStatus.SC_MULTIPLE_CHOICES) {
+        System.out.println(EntityUtils.toString(response.getEntity()));
+      }
+
+    } catch (IOException e) {
+      throw e;
+    }
+  }
+
   public static void main(String[] args) throws Exception {
+    sendGet();
   }
 
 }

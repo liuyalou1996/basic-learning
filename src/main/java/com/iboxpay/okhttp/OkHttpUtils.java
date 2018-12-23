@@ -3,6 +3,7 @@ package com.iboxpay.okhttp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -92,7 +93,7 @@ public class OkHttpUtils {
     // 增加请求头
     addHeaders(reqHeaders, reqBuilder);
     Request request = reqBuilder.get().build();
-    return getResponse(httpUrl.toString(), client, request);
+    return getResponse(client, request);
   }
 
   public static OkHttpResp sendPostWithKeyValue(String url, Map<String, Object> headers, Map<String, Object> params)
@@ -134,7 +135,7 @@ public class OkHttpUtils {
     }
 
     Request request = reqBuilder.post(formBody).build();
-    return getResponse(url, client, request);
+    return getResponse(client, request);
   }
 
   public static OkHttpResp sendPostInJson(String url, Map<String, Object> reqHeaders, Map<String, Object> params)
@@ -168,7 +169,7 @@ public class OkHttpUtils {
     }
 
     Request request = reqBuilder.post(requestBody).build();
-    return getResponse(url, client, request);
+    return getResponse(client, request);
   }
 
   public static OkHttpResp uploadFile(String url, List<MultipartFile> files) throws IOException {
@@ -202,7 +203,7 @@ public class OkHttpUtils {
 
     MultipartBody requestBody = multiBuilder.build();
     Request request = new Request.Builder().url(url).addHeader("User-Agent", USER_AGENT).post(requestBody).build();
-    return getResponse(url, client, request);
+    return getResponse(client, request);
   }
 
   public static byte[] downloadFile(String url) throws IOException {
@@ -234,7 +235,7 @@ public class OkHttpUtils {
     }
   }
 
-  private static OkHttpResp getResponse(String url, OkHttpClient client, Request request) throws IOException {
+  private static OkHttpResp getResponse(OkHttpClient client, Request request) throws IOException {
     OkHttpResp resp = new OkHttpResp();
     // 确保Response和ResponseBody关闭
     try (Response response = client.newCall(request).execute()) {
@@ -248,7 +249,7 @@ public class OkHttpUtils {
       resp.setByteStream(body.byteStream());
       resp.setBytes(body.bytes());
       resp.setRespHeaders(response.headers());
-      resp.setMediaType(body.contentType());
+      resp.setContentType(body.contentType());
       resp.setContentLength(body.contentLength());
       return resp;
     } catch (IOException e) {
@@ -319,7 +320,7 @@ public class OkHttpUtils {
     private InputStream byteStream;
     private byte[] bytes;
     private Headers respHeaders;
-    private MediaType mediaType;
+    private MediaType contentType;
     private long contentLength;
     private boolean successful;
 
@@ -339,8 +340,8 @@ public class OkHttpUtils {
       return respHeaders;
     }
 
-    public MediaType getMediaType() {
-      return mediaType;
+    public MediaType getContentType() {
+      return contentType;
     }
 
     public long getContentLength() {
@@ -367,8 +368,8 @@ public class OkHttpUtils {
       this.respHeaders = respHeaders;
     }
 
-    public void setMediaType(MediaType mediaType) {
-      this.mediaType = mediaType;
+    public void setContentType(MediaType contentType) {
+      this.contentType = contentType;
     }
 
     public void setContentLength(long contentLength) {
@@ -381,9 +382,10 @@ public class OkHttpUtils {
 
     @Override
     public String toString() {
-      return "OkHttpResp [respStr=" + respStr + ", byteStream=" + byteStream + ", bytes=" + bytes + ", respHeaders="
-          + respHeaders + ", mediaType=" + mediaType + ", contentLength=" + contentLength + ", successful=" + successful
-          + "]";
+      return "OkHttpResp [respStr=" + respStr + ", byteStream=" + byteStream + ", bytes=" + Arrays.toString(bytes)
+          + ", respHeaders=" + respHeaders + ", contentType=" + contentType + ", contentLength=" + contentLength
+          + ", successful=" + successful + "]";
     }
+
   }
 }

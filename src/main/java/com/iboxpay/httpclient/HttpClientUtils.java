@@ -31,6 +31,14 @@ public class HttpClientUtils {
 
   private static HttpClient httpClient = HttpClients.createDefault();
 
+  /**
+   * 发送get请求
+   * @param url 资源地址
+   * @param headers 请求头
+   * @param params 请求参数
+   * @return
+   * @throws Exception
+   */
   public static HttpClientResp sendGet(String url, Map<String, Object> headers, Map<String, Object> params)
       throws Exception {
     URIBuilder uriBuilder = new URIBuilder(url);
@@ -45,6 +53,14 @@ public class HttpClientUtils {
     return getResponse(httpGet);
   }
 
+  /**
+   * 模拟表单发送post请求
+   * @param url 资源地址
+   * @param headers 请求头
+   * @param params 请求参数
+   * @return
+   * @throws IOException
+   */
   public static HttpClientResp sendPostInHtmlForm(String url, Map<String, Object> headers, Map<String, Object> params)
       throws IOException {
     HttpPost httpPost = new HttpPost(url);
@@ -60,6 +76,14 @@ public class HttpClientUtils {
     return getResponse(httpPost);
   }
 
+  /**
+   * 发送post请求，请求参数格式为json
+   * @param url 资源地址
+   * @param headers 请求头
+   * @param jsonStr 请求参数json字符串
+   * @return
+   * @throws IOException
+   */
   public static HttpClientResp sendPostInJsonFormat(String url, Map<String, Object> headers, String jsonStr)
       throws IOException {
     HttpPost httpPost = new HttpPost(url);
@@ -131,6 +155,10 @@ public class HttpClientUtils {
 
     public Map<String, String> getHeaders() {
       return headers;
+    }
+
+    public String getHeader(String name) {
+      return headers.get(name);
     }
 
     public boolean isSuccessful() {

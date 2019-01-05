@@ -89,14 +89,14 @@ public class OkHttpUtils {
     }
 
     HttpUrl httpUrl = urlBuilder.build();
-    Request.Builder reqBuilder = new Request.Builder().url(httpUrl).addHeader("User-Agent", USER_AGENT);
+    Request.Builder reqBuilder = new Request.Builder().url(httpUrl);
     // 增加请求头
     addHeaders(reqHeaders, reqBuilder);
     Request request = reqBuilder.get().build();
     return getResponse(client, request);
   }
 
-  public static OkHttpResp sendPostWithKeyValue(String url, Map<String, Object> headers, Map<String, Object> params)
+  public static OkHttpResp sendPostInHtmlForm(String url, Map<String, Object> headers, Map<String, Object> params)
       throws IOException {
     return sendPostInHtmlForm(url, headers, params, TIMEOUT);
   }
@@ -117,7 +117,7 @@ public class OkHttpUtils {
     }
 
     OkHttpClient client = getOkHttpClient(timeout);
-    Request.Builder reqBuilder = new Request.Builder().url(url).addHeader("User-Agent", USER_AGENT);
+    Request.Builder reqBuilder = new Request.Builder().url(url);
     // 增加请求头
     addHeaders(reqHeaders, reqBuilder);
     FormBody.Builder formBuilder = new FormBody.Builder(Charset.forName("UTF-8"));
@@ -138,7 +138,7 @@ public class OkHttpUtils {
     return getResponse(client, request);
   }
 
-  public static OkHttpResp sendPostInJson(String url, Map<String, Object> reqHeaders, Map<String, Object> params)
+  public static OkHttpResp sendPostInJsonFormat(String url, Map<String, Object> reqHeaders, Map<String, Object> params)
       throws IOException {
     return sendPostInJsonFormat(url, reqHeaders, params, TIMEOUT);
   }
@@ -159,7 +159,7 @@ public class OkHttpUtils {
     }
 
     OkHttpClient client = getOkHttpClient(timeout);
-    Request.Builder reqBuilder = new Request.Builder().url(url).addHeader("User-Agent", USER_AGENT);
+    Request.Builder reqBuilder = new Request.Builder().url(url);
     // 添加请求头
     addHeaders(reqHeaders, reqBuilder);
     // 添加请求参数
@@ -258,6 +258,7 @@ public class OkHttpUtils {
   }
 
   private static void addHeaders(Map<String, Object> reqHeaders, Request.Builder reqBuilder) {
+    reqBuilder.addHeader("User-Agent", USER_AGENT);
     if (!CollectionUtils.isEmpty(reqHeaders)) {
       for (Entry<String, Object> reqHeader : reqHeaders.entrySet()) {
         Object value = reqHeader.getValue();

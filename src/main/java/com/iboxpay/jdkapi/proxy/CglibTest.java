@@ -1,4 +1,4 @@
-package com.iboxpay.jdk8.proxy;
+package com.iboxpay.jdkapi.proxy;
 
 class StudentBizImpl {
 

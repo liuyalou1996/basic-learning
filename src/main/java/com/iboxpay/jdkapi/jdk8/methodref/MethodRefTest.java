@@ -1,10 +1,10 @@
-package com.iboxpay.jdk8.methodref;
+package com.iboxpay.jdkapi.jdk8.methodref;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.iboxpay.jdk8.methodref.CarFactory.Car;
+import com.iboxpay.jdkapi.jdk8.methodref.CarFactory.Car;
 
 interface MethodRef {
 

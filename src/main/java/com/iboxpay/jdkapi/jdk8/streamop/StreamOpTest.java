@@ -1,4 +1,4 @@
-package com.iboxpay.jdk8.streamop;
+package com.iboxpay.jdkapi.jdk8.streamop;
 
 import java.util.ArrayList;
 import java.util.Arrays;

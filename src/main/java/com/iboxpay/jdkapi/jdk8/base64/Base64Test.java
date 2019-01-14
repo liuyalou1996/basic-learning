@@ -1,4 +1,4 @@
-package com.iboxpay.jdk8.base64;
+package com.iboxpay.jdkapi.jdk8.base64;
 
 import java.nio.charset.Charset;
 import java.util.Base64;

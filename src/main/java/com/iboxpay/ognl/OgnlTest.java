@@ -34,7 +34,7 @@ public class OgnlTest {
     System.out.println(maxValue);
   }
 
-  public static void invokeInstatnceMethod() throws Exception {
+  public static void invokeInstanceMethod() throws Exception {
     Map<String, Object> infoMap = new HashMap<>();
     infoMap.put("name", "lyl");
     infoMap.put("age", "22");
@@ -58,7 +58,7 @@ public class OgnlTest {
   public static void main(String[] args) throws Exception {
     compare();
     invokeStaticMethodAndVariable();
-    invokeInstatnceMethod();
+    invokeInstanceMethod();
     invokeInstanceMethodFromRoot();
   }
 

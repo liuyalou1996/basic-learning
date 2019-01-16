@@ -1,4 +1,4 @@
-package com.iboxpay.jdkapi.future;
+package com.iboxpay.jdkapi.threadpool;
 
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -33,13 +33,13 @@ public class CallableFutureTest {
   public static void combineWithCompletionService() throws Exception {
     ExecutorService executor = Executors.newCachedThreadPool();
     CompletionService<Integer> service = new ExecutorCompletionService<>(executor);
-    for (int count = 0; count < 5; count++) {
+    for (int count = 0; count < 10; count++) {
       int taskId = count + 1;
       service.submit(() -> taskId);
     }
-    for (int count = 0; count < 6; count++) {
+    for (int count = 0; count < 10; count++) {
       // 根据完成的顺序取出结果
-      System.out.println(service.take().get());
+      System.out.println("执行结果为：" + service.take().get());
     }
   }
 

@@ -42,7 +42,7 @@ public class HttpClientUtils {
   public static HttpClientResp sendGet(String url, Map<String, Object> headers, Map<String, Object> params)
       throws Exception {
     URIBuilder uriBuilder = new URIBuilder(url);
-    if (CollectionUtils.isNotEmpty(params)) {
+    if (!CollectionUtils.isEmpty(params)) {
       for (Map.Entry<String, Object> param : params.entrySet()) {
         uriBuilder.setParameter(param.getKey(), String.valueOf(param.getValue()));
       }
@@ -65,7 +65,7 @@ public class HttpClientUtils {
       throws IOException {
     HttpPost httpPost = new HttpPost(url);
     setHeaders(httpPost, headers);
-    if (CollectionUtils.isNotEmpty(params)) {
+    if (!CollectionUtils.isEmpty(params)) {
       List<NameValuePair> formParams = new ArrayList<>();
       for (Map.Entry<String, Object> param : params.entrySet()) {
         formParams.add(new BasicNameValuePair(param.getKey(), String.valueOf(param.getValue())));
@@ -93,7 +93,7 @@ public class HttpClientUtils {
   }
 
   public static void setHeaders(AbstractHttpMessage message, Map<String, Object> headers) {
-    if (CollectionUtils.isNotEmpty(headers)) {
+    if (!CollectionUtils.isEmpty(headers)) {
       for (Map.Entry<String, Object> header : headers.entrySet()) {
         message.setHeader(header.getKey(), String.valueOf(header.getValue()));
       }

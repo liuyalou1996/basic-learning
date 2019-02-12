@@ -11,3 +11,4 @@ target/classes/META-INF/MANIFEST.MF
 .project
 .classpath
 *.class
+target/

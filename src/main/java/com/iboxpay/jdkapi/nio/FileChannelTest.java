@@ -52,7 +52,7 @@ public class FileChannelTest {
       // 将位置
       channel.position(file.length());
       channel.write(buffer);
-      System.out.println("复制成功！");
+      System.out.println("追加成功！");
     } catch (Exception e) {
       e.printStackTrace();
     }

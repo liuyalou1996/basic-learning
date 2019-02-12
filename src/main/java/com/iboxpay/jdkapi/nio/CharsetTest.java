@@ -7,7 +7,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 
-public class CharsetTeset {
+public class CharsetTest {
 
   public static void main(String[] args) throws Exception {
     Charset charset = StandardCharsets.UTF_8;

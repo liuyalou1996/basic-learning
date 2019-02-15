@@ -1,5 +1,6 @@
 package com.iboxpay.fastjson;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,12 @@ import com.alibaba.fastjson.serializer.SerializeFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
 public class JsonUtils {
+
+  private static List<SerializerFeature> featureList = new ArrayList<>();
+
+  static {
+    featureList.add(SerializerFeature.WriteDateUseDateFormat);
+  }
 
   public static String toJsonString(Object obj, SerializeFilter... filters) {
     return toJsonString(obj, false, false, filters);
@@ -35,19 +42,24 @@ public class JsonUtils {
     }
 
     if (isNullValueAllowed) {
+      featureList.add(SerializerFeature.WriteMapNullValue);
+      featureList.add(SerializerFeature.WriteNullListAsEmpty);
+      featureList.add(SerializerFeature.WriteNullNumberAsZero);
+      featureList.add(SerializerFeature.WriteNullStringAsEmpty);
       if (prettyFormat) {
-        return JSON.toJSONString(obj, filters, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat,
-            SerializerFeature.WriteDateUseDateFormat);
+        featureList.add(SerializerFeature.PrettyFormat);
       }
-      return JSON.toJSONString(obj, filters, SerializerFeature.WriteMapNullValue,
-          SerializerFeature.WriteDateUseDateFormat);
+
     } else {
       if (prettyFormat) {
-        return JSON.toJSONString(obj, filters, SerializerFeature.PrettyFormat,
-            SerializerFeature.WriteDateUseDateFormat);
+        featureList.add(SerializerFeature.PrettyFormat);
       }
-      return JSON.toJSONString(obj, filters, SerializerFeature.WriteDateUseDateFormat);
     }
+
+    int size = featureList.size();
+    SerializerFeature[] features = new SerializerFeature[size];
+    System.arraycopy(featureList.toArray(), 0, features, 0, size);
+    return JSON.toJSONString(obj, filters, features);
   }
 
   /**

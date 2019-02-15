@@ -20,18 +20,18 @@ public class DateUtils {
   }
 
   public static Date parseStringToDate(String dateStr, String format) throws ParseException {
-    if (StringUtils.isEmpty(format)) {
+    if (StringUtils.isNotEmpty(format)) {
       df = new SimpleDateFormat(format);
     }
     return df.parse(dateStr);
   }
 
   public static String parseDateToString(Date date) {
-    return parseDateToString(date);
+    return parseDateToString(date, null);
   }
 
   public static String parseDateToString(Date date, String format) {
-    if (StringUtils.isEmpty(format)) {
+    if (StringUtils.isNotEmpty(format)) {
       df = new SimpleDateFormat(format);
     }
     return df.format(date);

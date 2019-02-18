@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 锁降级：从写锁变成读锁。<br/>
  * 锁升级：从读锁变成写锁。<br/>
  * ReentrantReadWriteLock只支持锁降级，不支持锁升级，写锁的并发限制要比读锁高。<br/>
- * ReentrantReadWriteLock也支持Condition，但只限于读锁。
+ * ReentrantReadWriteLock也支持Condition，但只限于写锁。
  */
 public class ReentrantReadWriteLockTest {
 

@@ -5,6 +5,9 @@ import java.util.Random;
 
 import com.iboxpay.algorithm.sort.sorter.Sorter;
 import com.iboxpay.algorithm.sort.sorter.impl.BubbleSorter;
+import com.iboxpay.algorithm.sort.sorter.impl.InsertionSorter;
+import com.iboxpay.algorithm.sort.sorter.impl.MergeSorter;
+import com.iboxpay.algorithm.sort.sorter.impl.QuickSorter;
 import com.iboxpay.algorithm.sort.sorter.impl.SelectionSorter;
 
 public class SortTest {
@@ -33,11 +36,38 @@ public class SortTest {
     System.out.println(Arrays.toString(arr));
   }
 
+  public static void insertionSortTest() {
+    int[] arr = initArray();
+    Sorter insertionSorter = new InsertionSorter();
+    insertionSorter.sort(arr);
+    System.out.println(Arrays.toString(arr));
+  }
+
+  public static void quickSortTest() {
+    int[] arr = initArray();
+    Sorter quickSorter = new QuickSorter();
+    quickSorter.sort(arr);
+    System.out.println(Arrays.toString(arr));
+  }
+
+  public static void mergeSort() {
+    int[] arr = initArray();
+    Sorter mergeSorter = new MergeSorter();
+    mergeSorter.sort(arr);
+    System.out.println(Arrays.toString(arr));
+  }
+
   public static void main(String[] args) {
     System.out.println("选择排序测试!");
     selectionSortTest();
     System.out.println("冒泡排序测试!");
     bubbleSortTest();
+    System.out.println("插入排序测试!");
+    insertionSortTest();
+    System.out.println("快速排序测试!");
+    quickSortTest();
+    System.out.println("归并排序测试!");
+    mergeSort();
   }
 
 }

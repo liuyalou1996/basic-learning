@@ -29,10 +29,12 @@ public class QuickSorter implements Sorter {
         right--;
       }
 
-      if (arr[right] < key) {
+      if (right > left) {
         temp = arr[right];
-        arr[right] = key;
-        key = temp;
+        arr[right] = arr[left];
+        arr[left] = temp;
+        // 交换位置后左指针所在位置肯定比基准值小，因此从左往右找比基准值大的值时不需要比较
+        left++;
       }
 
       // 从左往右找出比基准值大的值，找到就交换
@@ -40,10 +42,12 @@ public class QuickSorter implements Sorter {
         left++;
       }
 
-      if (arr[left] > key) {
+      if (right > left) {
         temp = arr[left];
-        arr[left] = key;
-        key = temp;
+        arr[left] = arr[right];
+        arr[right] = temp;
+        // 交换位置后右指针所在位置肯定比基准值大，因此从右往左找比基准值小的值时不需要比较
+        right--;
       }
     }
 

@@ -9,6 +9,7 @@ import com.iboxpay.algorithm.sort.sorter.impl.InsertionSorter;
 import com.iboxpay.algorithm.sort.sorter.impl.MergeSorter;
 import com.iboxpay.algorithm.sort.sorter.impl.QuickSorter;
 import com.iboxpay.algorithm.sort.sorter.impl.SelectionSorter;
+import com.iboxpay.algorithm.sort.sorter.impl.ShellSorter;
 
 public class SortTest {
 
@@ -16,7 +17,7 @@ public class SortTest {
     int[] arr = new int[10];
     Random rd = new Random();
     for (int count = 0; count < arr.length; count++) {
-      arr[count] = rd.nextInt(10) + 1;
+      arr[count] = rd.nextInt(100) + 1;
     }
 
     return arr;
@@ -43,6 +44,13 @@ public class SortTest {
     System.out.println(Arrays.toString(arr));
   }
 
+  public static void shellSortTest() {
+    int[] arr = initArray();
+    Sorter shellSorter = new ShellSorter();
+    shellSorter.sort(arr);
+    System.out.println(Arrays.toString(arr));
+  }
+
   public static void quickSortTest() {
     int[] arr = initArray();
     Sorter quickSorter = new QuickSorter();
@@ -64,6 +72,8 @@ public class SortTest {
     bubbleSortTest();
     System.out.println("插入排序测试!");
     insertionSortTest();
+    System.out.println("希尔排序测试!");
+    shellSortTest();
     System.out.println("快速排序测试!");
     quickSortTest();
     System.out.println("归并排序测试!");

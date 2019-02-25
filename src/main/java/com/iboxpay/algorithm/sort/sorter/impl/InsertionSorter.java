@@ -19,6 +19,9 @@ public class InsertionSorter implements Sorter {
           int temp = arr[j];
           arr[j] = arr[j - 1];
           arr[j - 1] = temp;
+        } else {
+          // 左边数字已排序，如果当前数字比左边最大的数字还大则是最大数，无需交换
+          break;
         }
       }
     }

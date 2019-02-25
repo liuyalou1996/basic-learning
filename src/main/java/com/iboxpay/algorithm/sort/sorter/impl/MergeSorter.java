@@ -2,6 +2,9 @@ package com.iboxpay.algorithm.sort.sorter.impl;
 
 import com.iboxpay.algorithm.sort.sorter.Sorter;
 
+/**
+ * 归并的含义是将两个或两个以上的有序表合并成一个新的有序表，分而治之
+ */
 public class MergeSorter implements Sorter {
 
   @Override

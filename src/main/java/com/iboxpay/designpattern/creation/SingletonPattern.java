@@ -2,15 +2,22 @@ package com.iboxpay.designpattern.creation;
 
 class Singleton {
 
-  private static Singleton instance;
+  // volatile关键字保证可见性和禁止指令重排
+  private static volatile Singleton instance;
 
   private Singleton() {
 
   }
 
-  public static synchronized Singleton getInstance() {
+  public static Singleton getInstance() {
+    // 最外层循环为空判断提高性能，防止每个线程进入该方法都要获取锁
     if (instance == null) {
-      instance = new Singleton();
+      synchronized (Singleton.class) {
+        // 这里非空判断保证单例
+        if (instance == null) {
+          instance = new Singleton();
+        }
+      }
     }
 
     return instance;

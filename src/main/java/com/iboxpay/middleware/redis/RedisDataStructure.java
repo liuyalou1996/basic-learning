@@ -1,4 +1,4 @@
-package com.iboxpay.redis;
+package com.iboxpay.middleware.redis;
 
 import java.io.IOException;
 import java.time.Duration;

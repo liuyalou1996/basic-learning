@@ -24,11 +24,12 @@ public class OperationExample {
   }
 
   public static void createPersistantNode(String path, byte[] data) throws Exception {
-    client.create().forPath(path, data);
+    // 若无父节点，则先创建父节点
+    client.create().creatingParentsIfNeeded().forPath(path, data);
   }
 
   public static void createEphemeralNode(String path, byte[] data) throws Exception {
-    client.create().withMode(CreateMode.EPHEMERAL).forPath(path, data);
+    client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path, data);
   }
 
   public static void createEphemeralSequentialNode(String path, byte[] data) throws Exception {

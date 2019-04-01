@@ -15,7 +15,7 @@ class Account {
     try {
       lock.lock();
       while (true) {
-        System.err.println("存钱是否拥有锁:" + lock.isHeldByCurrentThread());
+        System.err.println("存钱线程是否拥有锁:" + lock.isHeldByCurrentThread());
         if (balance + amount > 10000) {
           System.out.println("账户余额已满," + Thread.currentThread().getName() + "不能往账户存钱!");
           condition.await();

@@ -14,6 +14,7 @@ public class TransactionExample {
     ExponentialBackoffRetry policy = new ExponentialBackoffRetry(1000, 3);
 
     try (CuratorFramework client = CuratorFrameworkFactory.newClient("localhost:2181", policy)) {
+      client.start();
 
       CuratorOp create = client.transactionOp().create().forPath("/transaction", "trans".getBytes());
       CuratorOp setData = client.transactionOp().setData().forPath("/another/path", "other".getBytes());

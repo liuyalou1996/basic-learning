@@ -4,6 +4,9 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
+/**
+ * Curator提供了两种方法创建zk客户端实例，第一种是通过工厂方法模式，第二种是通过建造者模式
+ */
 public class CreateClientExample {
 
   private static final String CONNECTION_STRING = "localhost:2181";

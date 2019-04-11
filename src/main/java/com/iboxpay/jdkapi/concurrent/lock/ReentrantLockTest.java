@@ -1,4 +1,4 @@
-package com.iboxpay.jdkapi.concurrent;
+package com.iboxpay.jdkapi.concurrent.lock;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;

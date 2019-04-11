@@ -15,7 +15,7 @@ import java.util.concurrent.FutureTask;
  * FutureTask:可取消的异步计算，这个类实现了RunnableFuture接口，RunnableFuture继承了Runnable和Future接口。<br/>
  * ExecutorService:实现了Executor接口，代表一个执行器，提供了一些方法管理任务的终止以及生成Future跟踪一个或多个任务的进度。<br/>
  */
-public class CallableFutureTest {
+public class CallableFutureExample {
 
   public static void simpleUsage() throws Exception {
     Callable<Integer> callable = () -> new Random().nextInt(1000);

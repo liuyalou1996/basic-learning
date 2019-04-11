@@ -1,4 +1,4 @@
-package com.iboxpay.jdkapi.concurrent;
+package com.iboxpay.jdkapi.concurrent.tool;
 
 import java.util.concurrent.Semaphore;
 

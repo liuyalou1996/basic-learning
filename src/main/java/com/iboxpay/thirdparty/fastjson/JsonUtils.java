@@ -42,24 +42,19 @@ public class JsonUtils {
     }
 
     if (isNullValueAllowed) {
-      featureList.add(SerializerFeature.WriteMapNullValue);
-      featureList.add(SerializerFeature.WriteNullListAsEmpty);
-      featureList.add(SerializerFeature.WriteNullNumberAsZero);
-      featureList.add(SerializerFeature.WriteNullStringAsEmpty);
       if (prettyFormat) {
-        featureList.add(SerializerFeature.PrettyFormat);
+        return JSON.toJSONString(obj, filters, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat,
+            SerializerFeature.WriteDateUseDateFormat);
       }
-
+      return JSON.toJSONString(obj, filters, SerializerFeature.WriteMapNullValue,
+          SerializerFeature.WriteDateUseDateFormat);
     } else {
       if (prettyFormat) {
-        featureList.add(SerializerFeature.PrettyFormat);
+        return JSON.toJSONString(obj, filters, SerializerFeature.PrettyFormat,
+            SerializerFeature.WriteDateUseDateFormat);
       }
+      return JSON.toJSONString(obj, filters, SerializerFeature.WriteDateUseDateFormat);
     }
-
-    int size = featureList.size();
-    SerializerFeature[] features = new SerializerFeature[size];
-    System.arraycopy(featureList.toArray(), 0, features, 0, size);
-    return JSON.toJSONString(obj, filters, features);
   }
 
   /**
@@ -143,4 +138,5 @@ public class JsonUtils {
     String jsonStr = JSON.toJSONString(map);
     return JSON.parseObject(jsonStr, clazz);
   }
+
 }

@@ -1,4 +1,4 @@
-package com.iboxpay.httpclient;
+package com.iboxpay.thirdparty.httpclient;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.iboxpay.fastjson.JsonUtils;
+import com.iboxpay.thirdparty.fastjson.JsonUtils;
 
 public class HttpClientTest {
 

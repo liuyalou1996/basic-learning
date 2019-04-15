@@ -17,7 +17,7 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.iboxpay.fastjson.CollectionUtils;
+import com.iboxpay.thirdparty.fastjson.CollectionUtils;
 
 public class CustomizedZkClient implements Watcher {
 

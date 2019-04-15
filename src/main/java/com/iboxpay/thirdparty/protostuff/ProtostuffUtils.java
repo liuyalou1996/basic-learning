@@ -1,4 +1,4 @@
-package com.iboxpay.protostuff;
+package com.iboxpay.thirdparty.protostuff;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,7 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.iboxpay.fastjson.CollectionUtils;
+import com.iboxpay.thirdparty.fastjson.CollectionUtils;
 
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;

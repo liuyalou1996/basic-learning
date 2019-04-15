@@ -1,4 +1,4 @@
-package com.iboxpay.protostuff;
+package com.iboxpay.thirdparty.protostuff;
 
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;

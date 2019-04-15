@@ -1,4 +1,4 @@
-package com.iboxpay.okhttp;
+package com.iboxpay.thirdparty.okhttp;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.iboxpay.fastjson.CollectionUtils;
+import com.iboxpay.thirdparty.fastjson.CollectionUtils;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;

@@ -1,4 +1,4 @@
-package com.iboxpay.xml.entity;
+package com.iboxpay.thirdparty.xml.entity;
 
 public class User {
 

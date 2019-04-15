@@ -1,4 +1,4 @@
-package com.iboxpay.fastjson;
+package com.iboxpay.thirdparty.fastjson;
 
 import java.util.ArrayList;
 import java.util.List;

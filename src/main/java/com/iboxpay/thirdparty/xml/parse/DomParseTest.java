@@ -1,4 +1,4 @@
-package com.iboxpay.xml.parse;
+package com.iboxpay.thirdparty.xml.parse;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.iboxpay.xml.entity.User;
+import com.iboxpay.thirdparty.xml.entity.User;
 
 public class DomParseTest {
 

@@ -1,4 +1,4 @@
-package com.iboxpay.httpclient;
+package com.iboxpay.thirdparty.httpclient;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import org.apache.http.message.AbstractHttpMessage;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.iboxpay.fastjson.CollectionUtils;
+import com.iboxpay.thirdparty.fastjson.CollectionUtils;
 
 public class HttpClientUtils {
 

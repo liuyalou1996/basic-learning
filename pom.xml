@@ -111,13 +111,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<!-- 盒盾加解密sdk -->
-		<dependency>
-			<groupId>com.iboxpay.safe</groupId>
-			<artifactId>base-encryption-sdk</artifactId>
-			<version>0.0.4-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 
 </project>

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 
-public class DateTimeApiTest {
+public class DateTimeApiExample {
 
   public static void testLocalDateTime() {
     LocalDateTime currentTime = LocalDateTime.now();

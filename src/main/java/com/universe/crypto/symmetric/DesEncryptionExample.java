@@ -1,4 +1,4 @@
-package com.universe.cipher;
+package com.universe.crypto.symmetric;
 
 import java.util.Base64;
 

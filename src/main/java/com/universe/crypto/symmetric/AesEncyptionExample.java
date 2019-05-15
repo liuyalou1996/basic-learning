@@ -1,5 +1,6 @@
-package com.universe.cipher;
+package com.universe.crypto.symmetric;
 
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -11,9 +12,9 @@ public class AesEncyptionExample {
 
   public static void main(String[] args) throws Exception {
     KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-    // 种子必须是无法预测的
+    // 种子必须是无法预测的，最好不要手动指定
     String key = UUID.randomUUID().toString().replaceAll("-", "");
-    keyGenerator.init(128);
+    keyGenerator.init(128, new SecureRandom(key.getBytes()));
     SecretKey secretKey = keyGenerator.generateKey();
 
     Cipher cipher = Cipher.getInstance("AES");

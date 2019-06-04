@@ -88,87 +88,80 @@ public class EncryptUtils {
   }
 
   public static String encryptByRSA(String publicKeyText, String cleartext) throws Exception {
-    PublicKey publicKey = regeneratePublicKey(publicKeyText, Algorithm.RSA);
-    byte[] cleartextInBytes = cleartext.getBytes(DEFAULT_CHARSET);
-    byte[] ciphertextInBytes = transform(Algorithm.RSA, Cipher.ENCRYPT_MODE, publicKey, cleartextInBytes);
-    return BASE64_ENCODER.encodeToString(ciphertextInBytes);
+    return encryptAsymmetrically(publicKeyText, cleartext, Algorithm.RSA);
   }
 
-  public static String decryptByRSA(String privateKeyText, String cipherText) throws Exception {
-    PrivateKey privateKey = regeneratePrivateKey(privateKeyText, Algorithm.RSA);
-    byte[] ciphertextInBytes = BASE64_DECODER.decode(cipherText);
-    byte[] cleartextInBytes = transform(Algorithm.RSA, Cipher.DECRYPT_MODE, privateKey, ciphertextInBytes);
-    return new String(cleartextInBytes, DEFAULT_CHARSET);
+  public static String decryptByRSA(String privateKeyText, String ciphertext) throws Exception {
+    return decryptAsymmetrically(privateKeyText, ciphertext, Algorithm.RSA);
   }
 
   /**
    * SHA1签名算法和DSA加密算法结合使用生成数字签名
    * @param privateKeyText
-   * @param data
+   * @param msg
    * @return 数字签名
    * @throws Exception
    */
-  public static String signBySHA1WithDSA(String privateKeyText, String data) throws Exception {
-    return doSign(privateKeyText, data, Algorithm.DSA, Algorithm.SHA1WithDSA);
+  public static String signBySHA1WithDSA(String privateKeyText, String msg) throws Exception {
+    return doSign(privateKeyText, msg, Algorithm.DSA, Algorithm.SHA1WithDSA);
   }
 
   /**
    * SHA1签名算法和RSA加密算法结合使用生成数字签名
    * @param privateKeyText
-   * @param data
+   * @param msg
    * @return 数字签名
    * @throws Exception
    */
-  public static String signBySHA1WithRSA(String privateKeyText, String data) throws Exception {
-    return doSign(privateKeyText, data, Algorithm.RSA, Algorithm.SHA1WithRSA);
+  public static String signBySHA1WithRSA(String privateKeyText, String msg) throws Exception {
+    return doSign(privateKeyText, msg, Algorithm.RSA, Algorithm.SHA1WithRSA);
   }
 
   /**
    * SHA256签名算法和RSA加密算法结合使用生成数字签名
    * @param privateKeyText
-   * @param data
+   * @param msg
    * @return 数字签名
    * @throws Exception
    */
-  public static String signBySHA256WithRSA(String privateKeyText, String data) throws Exception {
-    return doSign(privateKeyText, data, Algorithm.RSA, Algorithm.SHA256WithRSA);
+  public static String signBySHA256WithRSA(String privateKeyText, String msg) throws Exception {
+    return doSign(privateKeyText, msg, Algorithm.RSA, Algorithm.SHA256WithRSA);
   }
 
   /**
    * SHA1签名算法和DSA加密算法检验数字签名
    * @param publicKeyText
-   * @param data
+   * @param msg
    * @param signatureText 数字
    * @return 检验是否成功
    * @throws Exception
    */
-  public static boolean verifyBySHA1WithDSA(String publicKeyText, String data, String signatureText) throws Exception {
-    return doVerify(publicKeyText, data, signatureText, Algorithm.DSA, Algorithm.SHA1WithDSA);
+  public static boolean verifyBySHA1WithDSA(String publicKeyText, String msg, String signatureText) throws Exception {
+    return doVerify(publicKeyText, msg, signatureText, Algorithm.DSA, Algorithm.SHA1WithDSA);
   }
 
   /**
    * SHA1签名算法和RSA加密算法检验数字签名
    * @param publicKeyText
-   * @param data
+   * @param msg
    * @param signatureText
-   * @return 检验是否成功
+   * @return 校验是否成功
    * @throws Exception
    */
-  public static boolean verifyBySHA1WithRSA(String publicKeyText, String data, String signatureText) throws Exception {
-    return doVerify(publicKeyText, data, signatureText, Algorithm.RSA, Algorithm.SHA1WithRSA);
+  public static boolean verifyBySHA1WithRSA(String publicKeyText, String msg, String signatureText) throws Exception {
+    return doVerify(publicKeyText, msg, signatureText, Algorithm.RSA, Algorithm.SHA1WithRSA);
   }
 
   /**
    * SHA256签名算法和RSA加密算法检验数字签名
    * @param publicKeyText
-   * @param data
+   * @param msg
    * @param signatureText
-   * @return 检验是否成功
+   * @return 校验是否成功
    * @throws Exception
    */
-  public static boolean verifyBySHA256WithRSA(String publicKeyText, String data, String signatureText)
-      throws Exception {
-    return doVerify(publicKeyText, data, signatureText, Algorithm.RSA, Algorithm.SHA256WithRSA);
+  public static boolean verifyBySHA256WithRSA(String publicKeyText, String msg, String signatureText) throws Exception {
+    return doVerify(publicKeyText, msg, signatureText, Algorithm.RSA, Algorithm.SHA256WithRSA);
   }
 
   /**
@@ -204,21 +197,53 @@ public class EncryptUtils {
   }
 
   /**
+   * 非对称加密
+   * @param publicKeyText 公钥
+   * @param cleartext 明文
+   * @param algorithm 非对称加密算法
+   * @return
+   * @throws Exception
+   */
+  public static String encryptAsymmetrically(String publicKeyText, String cleartext, Algorithm algorithm)
+      throws Exception {
+    PublicKey publicKey = regeneratePublicKey(publicKeyText, algorithm);
+    byte[] cleartextInBytes = cleartext.getBytes(DEFAULT_CHARSET);
+    byte[] ciphertextInBytes = transform(algorithm, Cipher.ENCRYPT_MODE, publicKey, cleartextInBytes);
+    return BASE64_ENCODER.encodeToString(ciphertextInBytes);
+  }
+
+  /**
+   * 非对称解密
+   * @param privateKeyText 私钥
+   * @param ciphertext 密文
+   * @param algorithm 非对称加密算法
+   * @return
+   * @throws Exception
+   */
+  public static String decryptAsymmetrically(String privateKeyText, String ciphertext, Algorithm algorithm)
+      throws Exception {
+    PrivateKey privateKey = regeneratePrivateKey(privateKeyText, algorithm);
+    byte[] ciphertextInBytes = BASE64_DECODER.decode(ciphertext);
+    byte[] cleartextInBytes = transform(algorithm, Cipher.DECRYPT_MODE, privateKey, ciphertextInBytes);
+    return new String(cleartextInBytes, DEFAULT_CHARSET);
+  }
+
+  /**
    * 生成数字签名
    * @param privateKeyText 私钥
-   * @param data 传输的数据
-   * @param keyAlgorithm 加密算法，见Algorithm中的加密算法
+   * @param msg 传输的数据
+   * @param encryptionAlgorithm 加密算法，见Algorithm中的加密算法
    * @param signatureAlgorithm 签名算法，见Algorithm中的签名算法
    * @return 数字签名
    * @throws Exception
    */
-  private static String doSign(String privateKeyText, String data, Algorithm keyAlgorithm, Algorithm signatureAlgorithm)
-      throws Exception {
-    PrivateKey privateKey = regeneratePrivateKey(privateKeyText, keyAlgorithm);
+  public static String doSign(String privateKeyText, String msg, Algorithm encryptionAlgorithm,
+      Algorithm signatureAlgorithm) throws Exception {
+    PrivateKey privateKey = regeneratePrivateKey(privateKeyText, encryptionAlgorithm);
     // Signature只支持签名算法
     Signature signature = Signature.getInstance(signatureAlgorithm.getName());
     signature.initSign(privateKey);
-    signature.update(data.getBytes(DEFAULT_CHARSET));
+    signature.update(msg.getBytes(DEFAULT_CHARSET));
     byte[] signatureInBytes = signature.sign();
     return BASE64_ENCODER.encodeToString(signatureInBytes);
   }
@@ -226,19 +251,19 @@ public class EncryptUtils {
   /**
    * 数字签名验证
    * @param publicKeyText 公钥 
-   * @param data 数据
+   * @param msg 传输的数据
    * @param signatureText 数字签名
-   * @param keyAlgorithm 加密算法，见Algorithm中的加密算法
+   * @param encryptionAlgorithm 加密算法，见Algorithm中的加密算法
    * @param signatureAlgorithm 签名算法，见Algorithm中的签名算法
    * @return 校验是否成功
    * @throws Exception
    */
-  private static boolean doVerify(String publicKeyText, String data, String signatureText, Algorithm keyAlgorithm,
+  public static boolean doVerify(String publicKeyText, String msg, String signatureText, Algorithm encryptionAlgorithm,
       Algorithm signatureAlgorithm) throws Exception {
-    PublicKey publicKey = regeneratePublicKey(publicKeyText, keyAlgorithm);
+    PublicKey publicKey = regeneratePublicKey(publicKeyText, encryptionAlgorithm);
     Signature signature = Signature.getInstance(signatureAlgorithm.getName());
     signature.initVerify(publicKey);
-    signature.update(data.getBytes(DEFAULT_CHARSET));
+    signature.update(msg.getBytes(DEFAULT_CHARSET));
     return signature.verify(BASE64_DECODER.decode(signatureText));
   }
 
@@ -393,7 +418,5 @@ public class EncryptUtils {
     public String toString() {
       return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
-
   }
-
 }

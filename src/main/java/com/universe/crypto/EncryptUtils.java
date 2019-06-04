@@ -23,9 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -170,6 +172,38 @@ public class EncryptUtils {
   }
 
   /**
+   * 对称加密
+   * @param secretKey 密钥
+   * @param cleartext 明文
+   * @param algorithm 对称加密算法，如AES、DES
+   * @return
+   * @throws Exception
+   */
+  public static String encryptSymmetrically(String secretKey, String cleartext, Algorithm algorithm) throws Exception {
+    SecretKey key = decodeSymmetricKey(secretKey, algorithm);
+    byte[] cleartextInBytes = cleartext.getBytes(DEFAULT_CHARSET);
+    byte[] ciphertextInBytes = transform(algorithm, Cipher.ENCRYPT_MODE, key, cleartextInBytes);
+
+    return BASE64_ENCODER.encodeToString(ciphertextInBytes);
+  }
+
+  /**
+   * 对称解密
+   * @param secretKey 密钥
+   * @param ciphertext 密文
+   * @param algorithm 对称加密算法，如AES、DES
+   * @return
+   * @throws Exception
+   */
+  public static String decryptSymmetrically(String secretKey, String ciphertext, Algorithm algorithm) throws Exception {
+    SecretKey key = decodeSymmetricKey(secretKey, algorithm);
+    byte[] ciphertextInBytes = BASE64_DECODER.decode(ciphertext);
+
+    byte[] cleartextInBytes = transform(algorithm, Cipher.DECRYPT_MODE, key, ciphertextInBytes);
+    return new String(cleartextInBytes, DEFAULT_CHARSET);
+  }
+
+  /**
    * 生成数字签名
    * @param privateKeyText 私钥
    * @param data 传输的数据
@@ -206,23 +240,6 @@ public class EncryptUtils {
     signature.initVerify(publicKey);
     signature.update(data.getBytes(DEFAULT_CHARSET));
     return signature.verify(BASE64_DECODER.decode(signatureText));
-  }
-
-  private static String encryptSymmetrically(String secretKey, String cleartext, Algorithm algorithm) throws Exception {
-    SecretKey key = decodeSymmetricKey(secretKey, algorithm);
-    byte[] cleartextInBytes = cleartext.getBytes(DEFAULT_CHARSET);
-    byte[] ciphertextInBytes = transform(algorithm, Cipher.ENCRYPT_MODE, key, cleartextInBytes);
-
-    return BASE64_ENCODER.encodeToString(ciphertextInBytes);
-  }
-
-  private static String decryptSymmetrically(String secretKey, String ciphertext, Algorithm algorithm)
-      throws Exception {
-    SecretKey key = decodeSymmetricKey(secretKey, algorithm);
-    byte[] ciphertextInBytes = BASE64_DECODER.decode(ciphertext);
-
-    byte[] cleartextInBytes = transform(algorithm, Cipher.DECRYPT_MODE, key, ciphertextInBytes);
-    return new String(cleartextInBytes, DEFAULT_CHARSET);
   }
 
   /**
@@ -267,11 +284,11 @@ public class EncryptUtils {
 
   private static byte[] transform(Algorithm algorithm, int mode, Key key, byte[] msg) throws Exception {
     Cipher cipher = CIPHER_CACHE.get(algorithm);
-    // 双空判断，减少上下文切换
+    // double check，减少上下文切换
     if (cipher == null) {
       synchronized (EncryptUtils.class) {
         if ((cipher = CIPHER_CACHE.get(algorithm)) == null) {
-          cipher = Cipher.getInstance(algorithm.getName());
+          cipher = determineWhichCipherToUse(algorithm);
           CIPHER_CACHE.put(algorithm, cipher);
         }
 
@@ -286,21 +303,52 @@ public class EncryptUtils {
     }
   }
 
-  public static enum Algorithm {
-    /*
-     * 加密算法
+  private static Cipher determineWhichCipherToUse(Algorithm algorithm)
+      throws NoSuchAlgorithmException, NoSuchPaddingException {
+    Cipher cipher = null;
+    String transformation = algorithm.getTransformation();
+    // 官方推荐的transformation使用algorithm/mode/padding组合，SunJCE使用ECB作为默认模式，使用PKCS5Padding作为默认填充
+    if (StringUtils.isNotEmpty(transformation)) {
+      cipher = Cipher.getInstance(transformation);
+    } else {
+      cipher = Cipher.getInstance(algorithm.getName());
+    }
+
+    return cipher;
+  }
+
+  /**
+   * 算法分为加密算法和签名算法，更多算法实现见：<br/>
+   * <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#impl">jdk8中的标准算法</a>
+   */
+  public static class Algorithm {
+
+    /**
+     * 以下为加密算法，加密算法transformation采用algorithm/mode/padding的形式
      */
-    AES("AES", 128), DES("DES", 56), RSA("RSA", 2048), DSA("DSA", 1024),
-    /*
-     * 签名算法
+    private static final Algorithm AES = new Algorithm("AES", "AES/ECB/PKCS5Padding", 128);
+    private static final Algorithm DES = new Algorithm("DES", "DES/ECB/PKCS5Padding", 56);
+    private static final Algorithm RSA = new Algorithm("RSA", "RSA/ECB/PKCS1Padding", 1024);
+
+    /**
+     * 以下为签名算法
      */
-    SHA1WithDSA("SHA1withDSA", 1024), SHA1WithRSA("SHA1withRSA", 2048), SHA256WithRSA("SHA256withRSA", 2048);
+    private static final Algorithm DSA = new Algorithm("DSA", 1024);
+    private static final Algorithm SHA1WithDSA = new Algorithm("SHA256WithRSA", 1024);
+    private static final Algorithm SHA1WithRSA = new Algorithm("SHA1WithRSA", 2048);
+    private static final Algorithm SHA256WithRSA = new Algorithm("SHA256WithRSA", 2048);
 
     private String name;
+    private String transformation;
     private int keySize;
 
-    private Algorithm(String name, int keySize) {
+    public Algorithm(String name, int keySize) {
+      this(name, null, keySize);
+    }
+
+    public Algorithm(String name, String transformation, int keySize) {
       this.name = name;
+      this.transformation = transformation;
       this.keySize = keySize;
     }
 
@@ -308,9 +356,19 @@ public class EncryptUtils {
       return name;
     }
 
+    public String getTransformation() {
+      return transformation;
+    }
+
     public int getKeySize() {
       return keySize;
     }
+
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
   }
 
   public static class AsymmetricKeyPair {

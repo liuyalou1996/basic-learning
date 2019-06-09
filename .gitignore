@@ -12,3 +12,6 @@ target/classes/META-INF/MANIFEST.MF
 .classpath
 *.class
 target/
+*.index
+*.hprof
+*.threads

@@ -9,14 +9,14 @@ import java.util.List;
  */
 public class HeapOOMExample {
 
-	static class OOMObject {
+  static class OOMObject {
 
-	}
+  }
 
-	public static void main(String[] args) {
-		List<OOMObject> list = new ArrayList<>();
-		while (true) {
-			list.add(new OOMObject());
-		}
-	}
+  public static void main(String[] args) {
+    List<OOMObject> list = new ArrayList<>();
+    while (true) {
+      list.add(new OOMObject());
+    }
+  }
 }

@@ -29,8 +29,8 @@ public class DomParseTest {
       User user = new User();
       Element sub = (Element) nodeList.item(count);
       int id = Integer.parseInt(sub.getAttribute("id"));
-      String name = sub.getElementsByTagName("name").item(0).getFirstChild().getTextContent();
-      String password = sub.getElementsByTagName("password").item(0).getFirstChild().getTextContent();
+      String name = sub.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+      String password = sub.getElementsByTagName("password").item(0).getFirstChild().getNodeValue();
       user.setId(id);
       user.setName(name);
       user.setPassword(password);

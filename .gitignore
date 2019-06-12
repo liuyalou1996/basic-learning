@@ -33,3 +33,9 @@ nbdist/
 
 ### log files ###
 *.log
+
+### OOM SNAP-SHOT
+*.index
+*.hprof
+*.threads
+

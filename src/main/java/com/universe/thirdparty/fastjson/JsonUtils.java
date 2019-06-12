@@ -3,6 +3,7 @@ package com.universe.thirdparty.fastjson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,7 +38,7 @@ public class JsonUtils {
 
   private static String toJsonString(Object obj, boolean isNullValueAllowed, boolean prettyFormat,
       SerializeFilter... filters) {
-    if (obj == null) {
+    if (Objects.isNull(obj)) {
       return null;
     }
 
@@ -57,15 +58,6 @@ public class JsonUtils {
     }
   }
 
-  /**
-   * 将json字符串转换为javaBean
-   * 
-   * @param jsonStr
-   *            json字符串
-   * @param clazz
-   *            运行时对象
-   * @return
-   */
   public static <T> T toJavaBean(String jsonStr, Class<T> clazz) {
     if (StringUtils.isBlank(jsonStr)) {
       return null;
@@ -74,15 +66,6 @@ public class JsonUtils {
     return JSON.parseObject(jsonStr, clazz);
   }
 
-  /**
-   * 字符串转换为list
-   * 
-   * @param jsonStr
-   *            json字符串
-   * @param clazz
-   *            运行时对象
-   * @return
-   */
   public static <T> List<T> toList(String jsonStr, Class<T> clazz) {
     if (StringUtils.isBlank(jsonStr)) {
       return null;
@@ -91,13 +74,6 @@ public class JsonUtils {
     return JSON.parseArray(jsonStr, clazz);
   }
 
-  /**
-   * 将json字符串转换为map
-   * 
-   * @param jsonStr
-   *            json字符串
-   * @return
-   */
   public static Map<String, Object> toMap(String jsonStr) {
     if (StringUtils.isBlank(jsonStr)) {
       return null;
@@ -106,30 +82,14 @@ public class JsonUtils {
     return JSON.parseObject(jsonStr, new TypeReference<Map<String, Object>>() {});
   }
 
-  /**
-   * 将javaBean转换为map
-   * 
-   * @param obj
-   *            转换的对象
-   * @return
-   */
   public static Map<String, Object> javaBeanToMap(Object obj) {
-    if (obj == null) {
+    if (Objects.isNull(obj)) {
       return null;
     }
 
     return toMap(toJsonString(obj));
   }
 
-  /**
-   * 将map转换为javaBean
-   * 
-   * @param map
-   *            map实例
-   * @param clazz
-   *            运行时对象
-   * @return
-   */
   public static <T> T mapToJavaBean(Map<String, ? extends Object> map, Class<T> clazz) {
     if (CollectionUtils.isEmpty(map)) {
       return null;

@@ -1,14 +1,35 @@
-target/classes/com/iboxpay/jdk8/streamOp/StreamOpTest.class
-target/classes/com/iboxpay/jdk8/methodref/MethodRefTest.class
-target/classes/com/iboxpay/jdk8/methodref/CarFactory.class
-target/classes/com/iboxpay/jdk8/methodref/Car.class
-target/classes/META-INF/maven/com.iboxpay/basic-learning/pom.xml
-target/classes/META-INF/maven/com.iboxpay/basic-learning/pom.properties
-target/classes/META-INF/MANIFEST.MF
-.settings/org.eclipse.m2e.core.prefs
-.settings/org.eclipse.jdt.core.prefs
-.settings/org.eclipse.core.resources.prefs
-.project
-.classpath
-*.class
 target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+/disconf/
+/disconfs/
+/log/
+/logs/
+/.logs/
+
+# maven backup files
+*.xml.versionsBackup
+
+### log files ###
+*.log

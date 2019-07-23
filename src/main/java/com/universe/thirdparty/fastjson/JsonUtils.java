@@ -1,6 +1,5 @@
 package com.universe.thirdparty.fastjson;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -13,12 +12,6 @@ import com.alibaba.fastjson.serializer.SerializeFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
 public class JsonUtils {
-
-  private static List<SerializerFeature> featureList = new ArrayList<>();
-
-  static {
-    featureList.add(SerializerFeature.WriteDateUseDateFormat);
-  }
 
   public static String toJsonString(Object obj, SerializeFilter... filters) {
     return toJsonString(obj, false, false, filters);

@@ -1,4 +1,4 @@
-package com.universe.ognl;
+package com.universe.thirdparty.ognl;
 
 import java.util.HashMap;
 import java.util.Map;

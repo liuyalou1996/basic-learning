@@ -1,2 +1,2 @@
 # basic-learning
-基础性学习
+基础学习

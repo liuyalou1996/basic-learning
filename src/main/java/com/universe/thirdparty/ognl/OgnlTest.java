@@ -42,7 +42,9 @@ public class OgnlTest {
     context.put("student", infoMap);
     // 此句也可写为Ognl.getValue("#student.get('name')", context, context.getRoot());
     String value = (String) Ognl.getValue("#student.name", context, context.getRoot());
+    String result = (String) Ognl.getValue("'name'.toUpperCase()", context, context.getRoot());
     System.out.println("调用实例方法的值为：" + value);
+    System.out.println("直接调用字符串对象的方法：" + result);
   }
 
   public static void invokeInstanceMethodFromRoot() throws OgnlException {

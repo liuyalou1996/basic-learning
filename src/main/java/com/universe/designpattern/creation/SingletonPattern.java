@@ -24,6 +24,18 @@ class Singleton {
   }
 }
 
+class OuterSingleton {
+
+  private static class InnerClass {
+
+    private static final OuterSingleton instance = new OuterSingleton();
+  }
+
+  public static OuterSingleton getInstance() {
+    return InnerClass.instance;
+  }
+}
+
 /**
  * 单例模式分为懒汉式和饿汉式，两者的相同点为构造器都是私有的，不同点为饿汉式单例会在类加载的时候实例化，而懒汉式单例则在第一次方法调用时实例化，且获取实例方法需要加上同步锁
  */
@@ -33,6 +45,10 @@ public class SingletonPattern {
     Singleton instance = Singleton.getInstance();
     Singleton instance2 = Singleton.getInstance();
     System.out.println(instance == instance2);
+
+    OuterSingleton outerSingleton = OuterSingleton.getInstance();
+    OuterSingleton outerSingleton2 = OuterSingleton.getInstance();
+    System.out.println(outerSingleton == outerSingleton2);
   }
 
 }

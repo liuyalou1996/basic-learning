@@ -351,17 +351,17 @@ public class EncryptUtils {
     /**
      * 以下为加密算法，加密算法transformation采用algorithm/mode/padding的形式
      */
-    private static final Algorithm AES = new Algorithm("AES", "AES/ECB/PKCS5Padding", 128);
-    private static final Algorithm DES = new Algorithm("DES", "DES/ECB/PKCS5Padding", 56);
-    private static final Algorithm RSA = new Algorithm("RSA", "RSA/ECB/PKCS1Padding", 1024);
+    public static final Algorithm AES = new Algorithm("AES", "AES/ECB/PKCS5Padding", 128);
+    public static final Algorithm DES = new Algorithm("DES", "DES/ECB/PKCS5Padding", 56);
+    public static final Algorithm RSA = new Algorithm("RSA", "RSA/ECB/PKCS1Padding", 1024);
 
     /**
      * 以下为签名算法
      */
-    private static final Algorithm DSA = new Algorithm("DSA", 1024);
-    private static final Algorithm SHA1WithDSA = new Algorithm("SHA256WithRSA", 1024);
-    private static final Algorithm SHA1WithRSA = new Algorithm("SHA1WithRSA", 2048);
-    private static final Algorithm SHA256WithRSA = new Algorithm("SHA256WithRSA", 2048);
+    public static final Algorithm DSA = new Algorithm("DSA", 1024);
+    public static final Algorithm SHA1WithDSA = new Algorithm("SHA256WithRSA", 1024);
+    public static final Algorithm SHA1WithRSA = new Algorithm("SHA1WithRSA", 2048);
+    public static final Algorithm SHA256WithRSA = new Algorithm("SHA256WithRSA", 2048);
 
     private String name;
     private String transformation;

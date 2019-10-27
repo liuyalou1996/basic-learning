@@ -1,4 +1,4 @@
-package com.universe.thirdparty.easyexcel.listener;
+package com.universe.thirdparty.easyexcel.example.listener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,21 +7,16 @@ import java.util.function.Consumer;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
-import com.universe.thirdparty.easyexcel.Staff;
+import com.universe.thirdparty.easyexcel.example.entity.Staff;
 import com.universe.thirdparty.fastjson.JsonUtils;
 
-public class ReadDataListener extends AnalysisEventListener<Staff> {
-
-  /**
-   * 每次读5条
-   */
-  private static final int BATCH_COUNT = 5;
+public class ReadExcelListener extends AnalysisEventListener<Staff> {
 
   private Consumer<List<Staff>> consumer;
 
   private List<Staff> staffList = new ArrayList<>();
 
-  public ReadDataListener(Consumer<List<Staff>> consumer) {
+  public ReadExcelListener(Consumer<List<Staff>> consumer) {
     this.consumer = consumer;
   }
 
@@ -34,11 +29,6 @@ public class ReadDataListener extends AnalysisEventListener<Staff> {
   public void invoke(Staff data, AnalysisContext context) {
     System.out.println("读到了一条数据:" + JsonUtils.toJsonString(data));
     staffList.add(data);
-
-    if (BATCH_COUNT <= staffList.size()) {
-      return;
-    }
-
   }
 
   @Override

@@ -1,15 +1,3 @@
-/*
- * Copyright (C) 2011-2019 ShenZhen iBOXCHAIN Information Technology Co.,Ltd.
- *
- * All right reserved.
- *
- * This software is the confidential and proprietary
- * information of iBoxChain Company of China.
- * ("Confidential Information"). You shall not disclose
- * such Confidential Information and shall use it only
- * in accordance with the terms of the contract agreement
- * you entered into with iBoxchain inc.
- */
 package com.universe.thirdparty.gson;
 
 import java.io.IOException;
@@ -17,7 +5,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,23 +18,42 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-/**
- * @author: liuyalou
- * @date: 2019年7月23日
- */
 public abstract class GsonUtils {
 
-  public static final Type MAP_TYPE = new TypeToken<Map<String, Object>>() {}.getType();
-  public static final Type LIST_TYPE = new TypeToken<List<Map<String, Object>>>() {}.getType();
-
-  private static final CollectionTypeAdapter COLLECTION_TYPE_ADAPTER = new CollectionTypeAdapter();
-
+  private static final ObjectTypeAdapter OBJECT_TYPE_ADAPTER = new ObjectTypeAdapter();
   private static final Map<Type, Gson> GSON_INSTANCE_CACHE = new ConcurrentHashMap<>();
 
-  private static final Gson DEFAULT_GSON = new Gson();
+  private static class DefaultGsonSingletonHolder {
+
+    private static final Gson DEFAULT_GSON = new Gson();
+
+    public static Gson getInstance() {
+      return DEFAULT_GSON;
+    }
+  }
+
+  public static class MapTypeSingletonHolder {
+
+    private static final Type MAP_TYPE = new TypeToken<Map<String, Object>>() {}.getType();
+
+    public static Type getInstance() {
+      return MAP_TYPE;
+    }
+
+  }
+
+  public static class ListTypeSingletonHolder {
+
+    private static final Type LIST_TYPE = new TypeToken<List<Map<String, Object>>>() {}.getType();
+
+    public static Type getInstance() {
+      return LIST_TYPE;
+    }
+
+  }
 
   public static String toJsonString(Object obj) {
-    return Objects.isNull(obj) ? null : DEFAULT_GSON.toJson(obj);
+    return obj == null ? null : DefaultGsonSingletonHolder.getInstance().toJson(obj);
   }
 
   public static String toPrettyJsonString(Object obj) {
@@ -74,12 +80,11 @@ public abstract class GsonUtils {
    * @return
    */
   private static String toJsonString(Object obj, boolean serializeNulls, boolean prettyFormat, boolean excludeField) {
-    if (Objects.isNull(obj)) {
+    if (obj == null) {
       return null;
     }
 
     GsonBuilder builder = new GsonBuilder();
-
     if (serializeNulls) {
       builder.serializeNulls();
     }
@@ -97,11 +102,7 @@ public abstract class GsonUtils {
   }
 
   public static <T> T toBean(String jsonStr, Class<T> clazz) {
-    if (StringUtils.isEmpty(jsonStr)) {
-      return null;
-    }
-
-    return DEFAULT_GSON.fromJson(jsonStr, clazz);
+    return StringUtils.isEmpty(jsonStr) ? null : DefaultGsonSingletonHolder.getInstance().fromJson(jsonStr, clazz);
   }
 
   public static <T> T toCollection(String jsonStr, Type type) {
@@ -118,20 +119,17 @@ public abstract class GsonUtils {
   }
 
   public static Map<String, Object> beanToMap(Object obj) {
-    return toCollection(toJsonString(obj), MAP_TYPE);
+    return toCollection(toJsonString(obj), MapTypeSingletonHolder.getInstance());
   }
 
   private static Gson getGsonInstance(Type type) {
     Gson gson = GSON_INSTANCE_CACHE.get(type);
-    if (Objects.isNull(gson)) {
+    if (gson == null) {
       GsonBuilder builder = new GsonBuilder();
 
-      if (MAP_TYPE.equals(type)) {
-        // 反序列化为Map<String,Object>时处理数字需要
-        builder.registerTypeAdapter(MAP_TYPE, COLLECTION_TYPE_ADAPTER);
-      } else if (LIST_TYPE.equals(type)) {
-        // 反序列化为List<Map<String,Object>>时处理数字需要
-        builder.registerTypeAdapter(LIST_TYPE, COLLECTION_TYPE_ADAPTER);
+      // 反序列化为Map<String,Object>或List<Map<String,Object>>，当值为Object时针对数字要特殊处理
+      if (MapTypeSingletonHolder.getInstance().equals(type) || ListTypeSingletonHolder.getInstance().equals(type)) {
+        builder.registerTypeAdapter(type, OBJECT_TYPE_ADAPTER);
       }
 
       gson = builder.create();
@@ -141,7 +139,12 @@ public abstract class GsonUtils {
     return gson;
   }
 
-  private static class CollectionTypeAdapter extends TypeAdapter<Object> {
+  /**
+   * 对象类型适配器，针对数字做了特殊处理
+   * @author liuyalou
+   * @date 2019年10月27日
+   */
+  private static class ObjectTypeAdapter extends TypeAdapter<Object> {
 
     @Override
     public Object read(JsonReader in) throws IOException {

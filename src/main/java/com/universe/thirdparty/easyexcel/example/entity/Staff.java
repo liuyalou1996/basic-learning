@@ -14,7 +14,7 @@ public class Staff {
   private String name;
 
   @ExcelProperty(index = 1)
-  private Integer age;
+  private int age;
 
   @ExcelProperty(index = 2)
   private String phone;
@@ -32,7 +32,7 @@ public class Staff {
     return name;
   }
 
-  public Integer getAge() {
+  public int getAge() {
     return age;
   }
 
@@ -56,7 +56,7 @@ public class Staff {
     this.name = name;
   }
 
-  public void setAge(Integer age) {
+  public void setAge(int age) {
     this.age = age;
   }
 

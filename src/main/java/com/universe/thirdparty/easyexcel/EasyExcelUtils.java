@@ -3,7 +3,9 @@ package com.universe.thirdparty.easyexcel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.universe.thirdparty.fastjson.CollectionUtils;
 
 public abstract class EasyExcelUtils {
 
@@ -141,6 +146,91 @@ public abstract class EasyExcelUtils {
   public static <T> void readSheetAsynchronously(InputStream is, Class<T> clazz, ReadListener<T> listener, int sheetNo, int headRowNo) {
     validateParams(sheetNo, headRowNo);
     EasyExcel.read(is).registerReadListener(listener).sheet(sheetNo - 1).head(clazz).headRowNumber(headRowNo).autoTrim(true).doRead();
+  }
+
+  /**
+   * 写入到Excel的sheet中
+   * @param dest 写入哪个文件
+   * @param content 写入内容列表
+   * @param sheetNo Excel中sheet编号，1代表第一个sheet
+   * @param needHead 是否写入头部信息
+   * @throws FileNotFoundException 
+   */
+  public static <T> void writeSheet(File dest, List<T> content, int sheetNo, boolean needHead) throws FileNotFoundException {
+    writeSheet(new FileOutputStream(dest), content, sheetNo, needHead);
+  }
+
+  /**
+   * 写入到Excel的sheet中
+   * @param dest 输出目的地
+   * @param content 写入内容
+   * @param sheetNo Excel中sheet编号，1代表第一个sheet
+   * @param needHead 是否写入头部信息
+   */
+  public static <T> void writeSheet(OutputStream dest, List<T> content, int sheetNo, boolean needHead) {
+    if (CollectionUtils.isEmpty(content)) {
+      return;
+    }
+
+    Class<?> clazz = content.get(0).getClass();
+    // 写之前父目录一定要存在，不然会报错
+    EasyExcel.write(dest).head(clazz).sheet(sheetNo - 1).doWrite(content);
+  }
+
+  /**
+   * 根据模板填充数据
+   * @param dest 输出目的地
+   * @param template 指定模板
+   * @param content 写入的内容
+   * @param sheetNo Excel中sheet编号，1代表第一个sheet
+   */
+  public static <T> void fillSheet(OutputStream dest, InputStream template, List<T> content, int sheetNo) {
+    if (CollectionUtils.isEmpty(content)) {
+      return;
+    }
+
+    Class<?> clazz = content.get(0).getClass();
+    // 填充时不写入头部信息
+    EasyExcel.write(dest).head(clazz).withTemplate(template).needHead(false).sheet(sheetNo - 1).doWrite(content);
+  }
+
+  public static <T> void batchFillSheet(File dest, File template, List<T> content, int sheetNo, int batchNum) throws FileNotFoundException {
+    batchFillSheet(new FileOutputStream(dest), new FileInputStream(template), content, sheetNo, batchNum);
+  }
+
+  /**
+   * 根据模板批量填充数据，会使用文件缓存(省内存)
+   * @param dest
+   * @param template
+   * @param content
+   * @param sheetNo
+   * @param batchNum 分几批处理
+   */
+  public static <T> void batchFillSheet(OutputStream dest, InputStream template, List<T> content, int sheetNo, int batchNum) {
+    if (CollectionUtils.isEmpty(content)) {
+      return;
+    }
+
+    if (batchNum <= 0) {
+      throw new RuntimeException("Invalid param,batchNum must be greater than 0");
+    }
+
+    int size = content.size();
+    Class<?> clazz = content.get(0).getClass();
+    ExcelWriter writer = EasyExcel.write(dest).withTemplate(template).build();
+    WriteSheet sheet = EasyExcel.writerSheet(sheetNo - 1).head(clazz).needHead(false).build();
+
+    int batchCount = size / batchNum;
+    int toIndex = 0;
+    for (int count = 0; count < batchNum; count++) {
+      toIndex = count == batchNum - 1 ? size : (count + 1) * batchCount;
+      writer.write(content.subList(count * batchCount, (count + 1) * toIndex), sheet);
+    }
+
+    // 清空list，方便垃圾回收
+    content.clear();
+    // 写完后关闭流
+    writer.finish();
   }
 
   private static void validateParams(int headRowNo, int sheetNo) {

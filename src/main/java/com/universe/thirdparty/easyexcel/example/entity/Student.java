@@ -5,20 +5,25 @@ import java.util.Date;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.alibaba.excel.annotation.write.style.HeadRowHeight;
 
+@HeadRowHeight(20)
+@ColumnWidth(10)
 public class Student {
 
-  @ExcelProperty(index = 1, value = "学号")
+  @ExcelProperty(index = 0, value = "学号")
   private int age;
 
-  @ExcelProperty(index = 0, value = "姓名")
+  @ExcelProperty(index = 1, value = "姓名")
   private String name;
 
   @ExcelProperty(index = 2, value = "总分")
   private double score;
 
-  @ExcelProperty(index = 3, value = "考试日期")
+  @ColumnWidth(15)
   @DateTimeFormat("yyyy-MM-dd")
+  @ExcelProperty(index = 3, value = "考试日期")
   private Date examDate;
 
   @ExcelIgnore
@@ -66,8 +71,7 @@ public class Student {
 
   @Override
   public String toString() {
-    return "Student [age=" + age + ", name=" + name + ", score=" + score + ", examDate=" + examDate + ", remark="
-        + remark + "]";
+    return "Student [age=" + age + ", name=" + name + ", score=" + score + ", examDate=" + examDate + ", remark=" + remark + "]";
   }
 
 }

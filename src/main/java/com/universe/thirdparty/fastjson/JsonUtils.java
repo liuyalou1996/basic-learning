@@ -8,47 +8,68 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializeFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
+/**
+ * json字符串与java bean转换工具类
+ * @author: liuyalou
+ * @date: 2019年10月29日
+ */
 public class JsonUtils {
 
   public static String toJsonString(Object obj, SerializeFilter... filters) {
-    return toJsonString(obj, false, false, filters);
+    return toJsonString(obj, null, false, false, filters);
   }
 
   public static String toJsonStringWithNullValue(Object obj, SerializeFilter... filters) {
-    return toJsonString(obj, true, false, filters);
+    return toJsonString(obj, null, true, false, filters);
   }
 
   public static String toPrettyJsonString(Object obj, SerializeFilter... filters) {
-    return toJsonString(obj, false, true, filters);
+    return toJsonString(obj, null, false, true, filters);
   }
 
   public static String toPrettyJsonStringWithNullValue(Object obj, SerializeFilter... filters) {
-    return toJsonString(obj, true, true, filters);
+    return toJsonString(obj, null, true, true, filters);
   }
 
-  private static String toJsonString(Object obj, boolean isNullValueAllowed, boolean prettyFormat,
+  public static String toJsonStringWithDateFormat(Object obj, String dateFormat, SerializeFilter... filters) {
+    return toJsonString(obj, dateFormat, false, false, filters);
+  }
+
+  public static String toJsonStringWithDateFormatAndNullValue(Object obj, String dateFormat, SerializeFilter... filters) {
+    return toJsonString(obj, dateFormat, true, false, filters);
+  }
+
+  public static String toPrettyJsonStringWithDateFormat(Object obj, String dateFormat, SerializeFilter... filters) {
+    return toJsonString(obj, dateFormat, false, true, filters);
+  }
+
+  public static String toPrettyJsonStringWithDateFormatAndNullValue(Object obj, String dateFormat, SerializeFilter... filters) {
+    return toJsonString(obj, dateFormat, true, true, filters);
+  }
+
+  public static String toJsonString(Object obj, String dateFormat, boolean writeNullValue, boolean prettyFormat,
       SerializeFilter... filters) {
-    if (Objects.isNull(obj)) {
+    if (obj == null) {
       return null;
     }
 
-    if (isNullValueAllowed) {
-      if (prettyFormat) {
-        return JSON.toJSONString(obj, filters, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat,
-            SerializerFeature.WriteDateUseDateFormat);
-      }
-      return JSON.toJSONString(obj, filters, SerializerFeature.WriteMapNullValue,
-          SerializerFeature.WriteDateUseDateFormat);
-    } else {
-      if (prettyFormat) {
-        return JSON.toJSONString(obj, filters, SerializerFeature.PrettyFormat,
-            SerializerFeature.WriteDateUseDateFormat);
-      }
-      return JSON.toJSONString(obj, filters, SerializerFeature.WriteDateUseDateFormat);
+    int defaultFeature = JSON.DEFAULT_GENERATE_FEATURE;
+    if (writeNullValue) {
+      return prettyFormat
+          ? JSON.toJSONString(obj, SerializeConfig.globalInstance, filters, dateFormat, defaultFeature, SerializerFeature.WriteMapNullValue,
+              SerializerFeature.PrettyFormat)
+          : JSON.toJSONString(obj, SerializeConfig.globalInstance, filters, dateFormat, defaultFeature,
+              SerializerFeature.WriteMapNullValue);
     }
+
+    return prettyFormat
+        ? JSON.toJSONString(obj, SerializeConfig.globalInstance, filters, dateFormat, defaultFeature, SerializerFeature.PrettyFormat)
+        : JSON.toJSONString(obj, SerializeConfig.globalInstance, filters, dateFormat, defaultFeature);
+
   }
 
   public static <T> T toJavaBean(String jsonStr, Class<T> clazz) {

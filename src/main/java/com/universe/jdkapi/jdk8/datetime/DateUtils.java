@@ -6,13 +6,14 @@ import java.time.temporal.TemporalQuery;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DateUtils {
-
-  public static final String DATE_PATTERN = "yyyy-MM-dd";
-  public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-  public static final String DATE_TIME_MILLS_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
+public abstract class DateUtils {
 
   private static final Map<String, DateTimeFormatter> FORMATTER_CACHE = new ConcurrentHashMap<>();
+
+  public static String format(TemporalAccessor temporal, Pattern pattern) {
+    DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat());
+    return formatter.format(temporal);
+  }
 
   /**
    * 将时间或日期转换为字符串，转换模式必须与TemporalAccessor保持一致
@@ -23,6 +24,11 @@ public class DateUtils {
   public static String format(TemporalAccessor temporal, String pattern) {
     DateTimeFormatter formatter = getDateTimeFormatter(pattern);
     return formatter.format(temporal);
+  }
+
+  public static <T> T parse(String text, Pattern pattern, TemporalQuery<T> query) {
+    DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat());
+    return formatter.parse(text, query);
   }
 
   /**
@@ -45,6 +51,33 @@ public class DateUtils {
     }
 
     return formatter;
+  }
+
+  public static enum Pattern {
+
+    DATE_WITHOUT_STRIKE("yyyyMMdd"),
+
+    DATE_WITH_STRIKE("yyyy-MM-dd"),
+
+    DATE_WITH_SLASH("yyyy/MM/dd"),
+
+    DATE_TIME_WITH_STRIKE("yyyy-MM-dd HH:mm:ss"),
+
+    DATE_TIME_WITHOUT_STRIKE("yyyyMMddHHmmss"),
+
+    DATE_TIME_MILLS_WITH_STRIKE("yyyy-MM-dd HH:mm:ss.SSS"),
+
+    DATE_TIME_MILLS_WITHOUT_STRIKE("yyyyMMddHHmmssSSS");
+
+    private String format;
+
+    private Pattern(String format) {
+      this.format = format;
+    }
+
+    public String getFormat() {
+      return format;
+    }
   }
 
 }

@@ -1,12 +1,13 @@
 package com.universe.thirdparty.httpclient;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -61,8 +62,7 @@ public class HttpClientUtils {
    * @return
    * @throws IOException
    */
-  public static HttpClientResp sendPostInHtmlForm(String url, Map<String, Object> headers, Map<String, Object> params)
-      throws IOException {
+  public static HttpClientResp sendPostInHtmlForm(String url, Map<String, Object> headers, Map<String, Object> params) throws IOException {
     HttpPost httpPost = new HttpPost(url);
     setHeaders(httpPost, headers);
     if (!CollectionUtils.isEmpty(params)) {
@@ -115,7 +115,6 @@ public class HttpClientUtils {
         resp.setContentType(httpEntity.getContentType().getValue());
         resp.setContentLength(httpEntity.getContentLength());
         resp.setRespStr(EntityUtils.toString(httpEntity, Consts.UTF_8));
-        resp.setByteStream(httpEntity.getContent());
         if (httpEntity.getContentEncoding() != null) {
           resp.setContentEncoding(httpEntity.getContentEncoding().getValue());
         }
@@ -131,7 +130,6 @@ public class HttpClientUtils {
   public static class HttpClientResp {
 
     private String respStr;
-    private InputStream byteStream;
     private long contentLength;
     private String contentType;
     private String contentEncoding;
@@ -140,10 +138,6 @@ public class HttpClientUtils {
 
     public String getRespStr() {
       return respStr;
-    }
-
-    public InputStream getByteStream() {
-      return byteStream;
     }
 
     public long getContentLength() {
@@ -170,10 +164,6 @@ public class HttpClientUtils {
       this.respStr = respStr;
     }
 
-    public void setByteStream(InputStream byteStream) {
-      this.byteStream = byteStream;
-    }
-
     public void setContentLength(long contentLength) {
       this.contentLength = contentLength;
     }
@@ -196,10 +186,9 @@ public class HttpClientUtils {
 
     @Override
     public String toString() {
-      return "HttpClientResp [respStr=" + respStr + ", byteStream=" + byteStream + ", contentLength=" + contentLength
-          + ", contentType=" + contentType + ", contentEncoding=" + contentEncoding + ", headers=" + headers + ", successful="
-          + successful + "]";
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
   }
+
 }

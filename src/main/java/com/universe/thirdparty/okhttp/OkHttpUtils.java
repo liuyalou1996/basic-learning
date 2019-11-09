@@ -1,7 +1,6 @@
 package com.universe.thirdparty.okhttp;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.List;
@@ -53,13 +52,12 @@ public class OkHttpUtils {
     return DEFAULT_CLIENT_BUILDER.build();
   }
 
-  public static OkHttpResp sendGet(String url, Map<String, Object> reqHeaders, Map<String, Object> params)
-      throws IOException {
+  public static OkHttpResp sendGet(String url, Map<String, Object> reqHeaders, Map<String, Object> params) throws IOException {
     return sendGet(url, reqHeaders, params, TIMEOUT_MILLIS);
   }
 
-  public static OkHttpResp sendGet(String url, Map<String, Object> reqHeaders, Map<String, Object> params,
-      long timeoutInMillis) throws IOException {
+  public static OkHttpResp sendGet(String url, Map<String, Object> reqHeaders, Map<String, Object> params, long timeoutInMillis)
+      throws IOException {
     OkHttpClient client = getOkHttpClient(timeoutInMillis);
     HttpUrl.Builder urlBuilder = HttpUrl.get(url).newBuilder();
     // 拼接参数
@@ -77,13 +75,12 @@ public class OkHttpUtils {
     return getResponse(client, request);
   }
 
-  public static OkHttpResp sendPostInHtmlForm(String url, Map<String, Object> headers, Map<String, Object> params)
-      throws IOException {
+  public static OkHttpResp sendPostInHtmlForm(String url, Map<String, Object> headers, Map<String, Object> params) throws IOException {
     return sendPostInHtmlForm(url, headers, params, TIMEOUT_MILLIS);
   }
 
-  public static OkHttpResp sendPostInHtmlForm(String url, Map<String, Object> reqHeaders, Map<String, Object> params,
-      long timeoutInMillis) throws IOException {
+  public static OkHttpResp sendPostInHtmlForm(String url, Map<String, Object> reqHeaders, Map<String, Object> params, long timeoutInMillis)
+      throws IOException {
     OkHttpClient client = getOkHttpClient(timeoutInMillis);
     Request.Builder reqBuilder = new Request.Builder().url(url);
     addHeaders(reqHeaders, reqBuilder);
@@ -101,8 +98,7 @@ public class OkHttpUtils {
     return getResponse(client, request);
   }
 
-  public static OkHttpResp sendPostInJsonFormat(String url, Map<String, Object> reqHeaders, Map<String, Object> params)
-      throws IOException {
+  public static OkHttpResp sendPostInJsonFormat(String url, Map<String, Object> reqHeaders, Map<String, Object> params) throws IOException {
     return sendPostInJsonFormat(url, reqHeaders, params, TIMEOUT_MILLIS);
   }
 
@@ -165,12 +161,9 @@ public class OkHttpUtils {
       if (!response.isSuccessful()) {
         resp.setSuccessful(false);
       }
-
       ResponseBody body = response.body();
       resp.setSuccessful(true);
       resp.setRespStr(body.string());
-      resp.setByteStream(body.byteStream());
-      resp.setBytes(body.bytes());
       resp.setRespHeaders(response.headers());
       resp.setContentType(body.contentType());
       resp.setContentLength(body.contentLength());
@@ -236,8 +229,6 @@ public class OkHttpUtils {
   public static class OkHttpResp {
 
     private String respStr;
-    private InputStream byteStream;
-    private byte[] bytes;
     private Headers respHeaders;
     private MediaType contentType;
     private long contentLength;
@@ -245,14 +236,6 @@ public class OkHttpUtils {
 
     public String getRespStr() {
       return respStr;
-    }
-
-    public InputStream getByteStream() {
-      return byteStream;
-    }
-
-    public byte[] getBytes() {
-      return bytes;
     }
 
     public Headers getRespHeaders() {
@@ -273,14 +256,6 @@ public class OkHttpUtils {
 
     public void setRespStr(String respStr) {
       this.respStr = respStr;
-    }
-
-    public void setByteStream(InputStream byteStream) {
-      this.byteStream = byteStream;
-    }
-
-    public void setBytes(byte[] bytes) {
-      this.bytes = bytes;
     }
 
     public void setRespHeaders(Headers respHeaders) {

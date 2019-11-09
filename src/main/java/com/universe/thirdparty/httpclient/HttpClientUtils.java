@@ -1,6 +1,7 @@
 package com.universe.thirdparty.httpclient;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +40,7 @@ public class HttpClientUtils {
    * @return
    * @throws Exception
    */
-  public static HttpClientResp sendGet(String url, Map<String, Object> headers, Map<String, Object> params)
-      throws Exception {
+  public static HttpClientResp sendGet(String url, Map<String, Object> headers, Map<String, Object> params) throws Exception {
     URIBuilder uriBuilder = new URIBuilder(url);
     if (!CollectionUtils.isEmpty(params)) {
       for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -84,8 +84,7 @@ public class HttpClientUtils {
    * @return
    * @throws IOException
    */
-  public static HttpClientResp sendPostInJsonFormat(String url, Map<String, Object> headers, String jsonStr)
-      throws IOException {
+  public static HttpClientResp sendPostInJsonFormat(String url, Map<String, Object> headers, String jsonStr) throws IOException {
     HttpPost httpPost = new HttpPost(url);
     setHeaders(httpPost, headers);
     httpPost.setEntity(new StringEntity(jsonStr, ContentType.APPLICATION_JSON));
@@ -116,6 +115,7 @@ public class HttpClientUtils {
         resp.setContentType(httpEntity.getContentType().getValue());
         resp.setContentLength(httpEntity.getContentLength());
         resp.setRespStr(EntityUtils.toString(httpEntity, Consts.UTF_8));
+        resp.setByteStream(httpEntity.getContent());
         if (httpEntity.getContentEncoding() != null) {
           resp.setContentEncoding(httpEntity.getContentEncoding().getValue());
         }
@@ -131,6 +131,7 @@ public class HttpClientUtils {
   public static class HttpClientResp {
 
     private String respStr;
+    private InputStream byteStream;
     private long contentLength;
     private String contentType;
     private String contentEncoding;
@@ -139,6 +140,10 @@ public class HttpClientUtils {
 
     public String getRespStr() {
       return respStr;
+    }
+
+    public InputStream getByteStream() {
+      return byteStream;
     }
 
     public long getContentLength() {
@@ -157,16 +162,16 @@ public class HttpClientUtils {
       return headers;
     }
 
-    public String getHeader(String name) {
-      return headers.get(name);
-    }
-
     public boolean isSuccessful() {
       return successful;
     }
 
     public void setRespStr(String respStr) {
       this.respStr = respStr;
+    }
+
+    public void setByteStream(InputStream byteStream) {
+      this.byteStream = byteStream;
     }
 
     public void setContentLength(long contentLength) {
@@ -191,8 +196,9 @@ public class HttpClientUtils {
 
     @Override
     public String toString() {
-      return "HttpClientResp [respStr=" + respStr + ", contentLength=" + contentLength + ", contentType=" + contentType
-          + ", contentEncoding=" + contentEncoding + ", headers=" + headers + ", successful=" + successful + "]";
+      return "HttpClientResp [respStr=" + respStr + ", byteStream=" + byteStream + ", contentLength=" + contentLength
+          + ", contentType=" + contentType + ", contentEncoding=" + contentEncoding + ", headers=" + headers + ", successful="
+          + successful + "]";
     }
 
   }

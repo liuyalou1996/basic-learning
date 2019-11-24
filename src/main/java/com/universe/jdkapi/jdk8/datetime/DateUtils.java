@@ -100,12 +100,30 @@ public abstract class DateUtils {
   }
 
   /**
-   * LocalDateTime实例转时间戳
+   * LocalDateTime实例转毫秒时间戳
    * @param localDateTime
    * @return 毫秒级时间戳
    */
   public static long localDateTimeToTimestamp(LocalDateTime localDateTime) {
     return localDateTime.atZone(SYSTEM_DEFAULT_ZONEID).toInstant().toEpochMilli();
+  }
+
+  /**
+   * Date实例转毫秒级时间戳
+   * @param date
+   * @return
+   */
+  public static long dateToTimestamp(Date date) {
+    return date.getTime();
+  }
+
+  /**
+   * 毫秒级时间戳转Date实例
+   * @param timestamp
+   * @return
+   */
+  public static Date timestampToDate(long timestampInMillis) {
+    return new Date(timestampInMillis);
   }
 
   /**

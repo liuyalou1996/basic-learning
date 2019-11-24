@@ -1,29 +1,50 @@
 package com.universe.jdkapi.jdk8.datetime;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQuery;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class DateUtils {
 
+  private static final ZoneId SYSTEM_DEFAULT_ZONEID = ZoneId.systemDefault();
+
   private static final Map<String, DateTimeFormatter> FORMATTER_CACHE = new ConcurrentHashMap<>();
+
+  public static String format(Date date, Pattern pattern) {
+    LocalDateTime localDateTime = dateToLocalDateTime(date);
+    return format(localDateTime, pattern);
+  }
 
   public static String format(TemporalAccessor temporal, Pattern pattern) {
     DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat());
     return formatter.format(temporal);
   }
 
+  public static String format(Date date, String pattern) {
+    LocalDateTime localDateTime = dateToLocalDateTime(date);
+    return format(localDateTime, pattern);
+  }
+
   /**
    * 将时间或日期转换为字符串，转换模式必须与TemporalAccessor保持一致
    * @param temporal TemporalAccessor实例，主要有LocalTime、LocalDate和LocalDateTime
    * @param pattern 转换模式，和SimpleDateFormat一致
-   * @return
+   * @return 格式化日期字符串
    */
   public static String format(TemporalAccessor temporal, String pattern) {
     DateTimeFormatter formatter = getDateTimeFormatter(pattern);
     return formatter.format(temporal);
+  }
+
+  public static Date parse(String text, Pattern pattern) {
+    LocalDateTime localDateTime = parse(text, pattern, LocalDateTime::from);
+    return localDateTimeToDate(localDateTime);
   }
 
   public static <T> T parse(String text, Pattern pattern, TemporalQuery<T> query) {
@@ -31,16 +52,128 @@ public abstract class DateUtils {
     return formatter.parse(text, query);
   }
 
+  public static Date parse(String text, String pattern) {
+    LocalDateTime localDateTime = parse(text, pattern, LocalDateTime::from);
+    return localDateTimeToDate(localDateTime);
+  }
+
   /**
    * 将时间或日期字符串转换为时间或日期，时间或日期字符串、转换格式、TemporalQuery必须保持一致
    * @param text 时间或日期字符串
    * @param pattern 转换模式，和SimpleDateFormat一致
    * @param query 函数式接口，通过LocalTime、LocalDate、LocalDateTime的静态方法from()可实现，如LocalDate::from
-   * @return
+   * @return LocalTime、LocalDate、LocalDateTime实例
    */
   public static <T> T parse(String text, String pattern, TemporalQuery<T> query) {
     DateTimeFormatter formatter = getDateTimeFormatter(pattern);
     return formatter.parse(text, query);
+  }
+
+  /**
+   * Date转LocalDateTime实例
+   * @param date
+   * @return LocalDateTime实例
+   */
+  public static LocalDateTime dateToLocalDateTime(Date date) {
+    Instant instant = date.toInstant();
+    return instant.atZone(SYSTEM_DEFAULT_ZONEID).toLocalDateTime();
+  }
+
+  /**
+   * LocalDateTime实例转Date实例
+   * @param localDateTime
+   * @return Date实例
+   */
+  public static Date localDateTimeToDate(LocalDateTime localDateTime) {
+    Instant instant = localDateTime.atZone(SYSTEM_DEFAULT_ZONEID).toInstant();
+    return Date.from(instant);
+  }
+
+  /**
+   * 毫秒级时间戳转LocaDateTime实例
+   * @param timestampInMillis
+   * @return LocalDateTime实例
+   */
+  public static LocalDateTime timestampToLocalDateTime(long timestampInMillis) {
+    Instant instant = Instant.ofEpochMilli(timestampInMillis);
+    return LocalDateTime.ofInstant(instant, SYSTEM_DEFAULT_ZONEID);
+  }
+
+  /**
+   * LocalDateTime实例转时间戳
+   * @param localDateTime
+   * @return 毫秒级时间戳
+   */
+  public static long localDateTimeToTimestamp(LocalDateTime localDateTime) {
+    return localDateTime.atZone(SYSTEM_DEFAULT_ZONEID).toInstant().toEpochMilli();
+  }
+
+  /**
+   * Unix秒级时间戳
+   * @return
+   */
+  public static long getUnixTimestamp() {
+    return System.currentTimeMillis() / 1000;
+  }
+
+  public static boolean isBefore(LocalDateTime former, LocalDateTime later) {
+    return former.isBefore(later);
+  }
+
+  public static boolean isAfter(LocalDateTime former, LocalDateTime later) {
+    return former.isAfter(later);
+  }
+
+  public static boolean isEqual(LocalDateTime former, LocalDateTime later) {
+    return former.isEqual(later);
+  }
+
+  public static LocalDateTime yearsAgo(long years) {
+    return LocalDateTime.now().minusYears(years);
+  }
+
+  public static LocalDateTime yearsLater(long years) {
+    return LocalDateTime.now().plusYears(years);
+  }
+
+  public static LocalDateTime monthsAgo(long months) {
+    return LocalDateTime.now().minusMonths(months);
+  }
+
+  public static LocalDateTime monthsLater(long months) {
+    return LocalDateTime.now().plusMonths(months);
+  }
+
+  public static LocalDateTime daysAgo(long days) {
+    return LocalDateTime.now().minusDays(days);
+  }
+
+  public static LocalDateTime daysLater(long days) {
+    return LocalDateTime.now().plusDays(days);
+  }
+
+  public static LocalDateTime hoursAgo(long hours) {
+    return LocalDateTime.now().minusHours(hours);
+  }
+
+  public static LocalDateTime hoursLater(long hours) {
+    return LocalDateTime.now().plusHours(hours);
+  }
+
+  public static LocalDateTime minutesAgo(long minutes) {
+    return LocalDateTime.now().minusMinutes(minutes);
+  }
+
+  public static LocalDateTime minutesLater(long minutes) {
+    return LocalDateTime.now().plusMinutes(minutes);
+  }
+
+  public static LocalDateTime secondsAgo(long seconds) {
+    return LocalDateTime.now().minusSeconds(seconds);
+  }
+
+  public static LocalDateTime secondsLater(long seconds) {
+    return LocalDateTime.now().plusSeconds(seconds);
   }
 
   private static DateTimeFormatter getDateTimeFormatter(String pattern) {
@@ -53,21 +186,15 @@ public abstract class DateUtils {
     return formatter;
   }
 
-  public static enum Pattern {
+  public static class Pattern {
 
-    DATE_WITHOUT_STRIKE("yyyyMMdd"),
-
-    DATE_WITH_STRIKE("yyyy-MM-dd"),
-
-    DATE_WITH_SLASH("yyyy/MM/dd"),
-
-    DATE_TIME_WITH_STRIKE("yyyy-MM-dd HH:mm:ss"),
-
-    DATE_TIME_WITHOUT_STRIKE("yyyyMMddHHmmss"),
-
-    DATE_TIME_MILLS_WITH_STRIKE("yyyy-MM-dd HH:mm:ss.SSS"),
-
-    DATE_TIME_MILLS_WITHOUT_STRIKE("yyyyMMddHHmmssSSS");
+    public static final Pattern DATE_WITHOUT_STRIKE = Pattern.of("yyyyMMdd");
+    public static final Pattern DATE_WITH_STRIKE = Pattern.of("yyyy-MM-dd");
+    public static final Pattern DATE_WITH_SLASH = Pattern.of("yyyy/MM/dd");
+    public static final Pattern DATE_TIME_WITH_STRIKE = Pattern.of("yyyy-MM-dd HH:mm:ss");
+    public static final Pattern DATE_TIME_WITHOUT_STRIKE = Pattern.of("yyyyMMddHHmmss");
+    public static final Pattern DATE_TIME_MILLS_WITH_STRIKE = Pattern.of("yyyy-MM-dd HH:mm:ss.SSS");
+    public static final Pattern DATE_TIME_MILLS_WITHOUT_STRIKE = Pattern.of("yyyyMMddHHmmssSSS");
 
     private String format;
 
@@ -77,6 +204,15 @@ public abstract class DateUtils {
 
     public String getFormat() {
       return format;
+    }
+
+    public static Pattern of(String pattern) {
+      return new Pattern(pattern);
+    }
+
+    @Override
+    public String toString() {
+      return "Pattern [format=" + format + "]";
     }
   }
 

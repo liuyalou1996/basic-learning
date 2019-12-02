@@ -4,11 +4,68 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+
+class Hobby {
+
+  String hobbyName;
+
+  public Hobby(String hobbyName) {
+    this.hobbyName = hobbyName;
+  }
+
+  public String getHobbyName() {
+    return hobbyName;
+  }
+
+  public void setHobbyName(String hobbyName) {
+    this.hobbyName = hobbyName;
+  }
+
+  @Override
+  public String toString() {
+    return "Hobby [hobbyName=" + hobbyName + "]";
+  }
+
+}
+
+class Student {
+
+  String name;
+  List<Hobby> hobbies;
+
+  public Student(String name, List<Hobby> hobbies) {
+    super();
+    this.name = name;
+    this.hobbies = hobbies;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public List<Hobby> getHobbies() {
+    return hobbies;
+  }
+
+  public void setHobbies(List<Hobby> hobbies) {
+    this.hobbies = hobbies;
+  }
+
+  @Override
+  public String toString() {
+    return "Student [name=" + name + ", hobbies=" + hobbies + "]";
+  }
+}
 
 public class StreamOpTest {
 
@@ -27,8 +84,7 @@ public class StreamOpTest {
   public static void elementMapping() {
     List<Integer> numberList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 7);
 
-    List<Integer> newNumberList =
-        numberList.stream().map(number -> number * number).distinct().collect(Collectors.toList());
+    List<Integer> newNumberList = numberList.stream().map(number -> number * number).distinct().collect(Collectors.toList());
     System.out.println(newNumberList);
 
     IntSummaryStatistics statistics = numberList.stream().mapToInt(ele -> ele).summaryStatistics();
@@ -54,11 +110,38 @@ public class StreamOpTest {
    * 使用collectors
    */
   public static void useCollectors() {
-    List<String> list = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "g");
+    List<String> list = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
     Set<String> set = list.stream().collect(Collectors.toSet());
     String mergedStr = list.stream().collect(Collectors.joining(","));
     System.out.println("转换为set集合：" + set);
     System.out.println("元素归并后：" + mergedStr);
+  }
+
+  /**
+   * 通过实例某个字段进行分组
+   */
+  public static void useGroupingBy() {
+    List<Student> students = new ArrayList<>();
+    for (int count = 0; count < 3; count++) {
+      students.add(new Student("student" + count, Arrays.asList(new Hobby("hobby" + count))));
+    }
+
+    Map<String, List<Student>> map = students.stream().collect(Collectors.groupingBy(Student::getName));
+    System.out.println(map);
+
+  }
+
+  /**
+   * 从一个流转换成另一个流
+   */
+  public static void useFlatMap() {
+    List<Student> students = new ArrayList<>();
+    for (int count = 0; count < 3; count++) {
+      students.add(new Student("student" + count, Arrays.asList(new Hobby("hobby" + count))));
+    }
+
+    List<Hobby> allHobbies = students.stream().flatMap(stu -> stu.getHobbies().stream()).collect(Collectors.toList());
+    System.out.println("提取后的hobbies:" + allHobbies);
   }
 
   /**
@@ -82,6 +165,6 @@ public class StreamOpTest {
   }
 
   public static void main(String[] args) {
+    useGroupingBy();
   }
-
 }

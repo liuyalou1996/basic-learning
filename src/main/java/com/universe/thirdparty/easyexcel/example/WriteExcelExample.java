@@ -1,7 +1,6 @@
 package com.universe.thirdparty.easyexcel.example;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,12 +11,12 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.universe.jdkapi.jdk8.datetime.DateUtils;
 import com.universe.jdkapi.jdk8.datetime.DateUtils.Pattern;
-import com.universe.thirdparty.easyexcel.EasyExcelUtils;
 import com.universe.thirdparty.easyexcel.example.entity.Student;
 
 public class WriteExcelExample {
 
-  private static final String BASE_PATH = System.getProperty("user.home") + File.separator + "test" + File.separator + "temp";
+  private static final String BASE_PATH =
+      System.getProperty("user.home") + File.separator + "test" + File.separator + "easyexcel";
 
   private static List<Student> studentList = new ArrayList<>();
 
@@ -67,11 +66,5 @@ public class WriteExcelExample {
 
   private static String generateFileName() {
     return DateUtils.format(LocalDateTime.now(), Pattern.DATE_TIME_MILLS_WITHOUT_STRIKE) + ".xlsx";
-  }
-
-  public static void main(String[] args) throws FileNotFoundException {
-    File template = new File(BASE_PATH, "student.xlsx");
-    File dest = new File(BASE_PATH, generateFileName());
-    EasyExcelUtils.batchFillSheet(dest, template, studentList, 1, 2);
   }
 }

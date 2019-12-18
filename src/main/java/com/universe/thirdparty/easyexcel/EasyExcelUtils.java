@@ -19,9 +19,9 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.util.CollectionUtils;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import com.universe.thirdparty.fastjson.CollectionUtils;
 
 public abstract class EasyExcelUtils {
 
@@ -31,48 +31,21 @@ public abstract class EasyExcelUtils {
   private static final int DEFAULT_SHEET_NO = 1;
 
   /**
-   * 默认头部信息占一行，即从第二行开始读取
-   */
-  private static final int DEFAULT_HEADROW_NO = 1;
-
-  /**
    * 异步读取触发清空list的行数
    */
   private static final int DEFAULT_BATCH_COUNT = 3000;
 
-  /**
-   * 同步读取Excel中的第一个sheet，头部信息占一行，即从第二行开始读取数据
-   * @param file 
-   * @param clazz 使用运行时类型为clazz的对象保存数据
-   * @return
-   * @throws FileNotFoundException
-   */
-  public static <T> List<T> readSheetSynchronously(File file, Class<T> clazz) throws FileNotFoundException {
-    return readSheetSynchronously(file, clazz, DEFAULT_SHEET_NO, DEFAULT_HEADROW_NO);
+  public static <T> List<T> readSheetSynchronously(File file, Class<T> clazz, int headRowNo) throws FileNotFoundException {
+    return readSheetSynchronously(file, clazz, headRowNo, DEFAULT_SHEET_NO);
   }
 
-  /**
-   * 同步读取Excel中的第一个sheet，第二行开始读取数据(头部信息占一行)
-   * @param is 输入流
-   * @param clazz 使用运行时类型为clazz的对象实例保存数据
-   * @return
-   */
-  public static <T> List<T> readSheetSynchronously(InputStream is, Class<T> clazz) {
-    return readSheetSynchronously(is, clazz, DEFAULT_SHEET_NO, DEFAULT_HEADROW_NO);
-  }
-
-  /**
-   * 同步读取Excel中的sheet
-   * @param file 
-   * @param clazz 使用运行时类型为clazz的对象保存数据
-   * @param headRowNo 头部信息所占行数
-   * @param sheetNo Excel中sheet编号，1代表第一个sheet
-   * @return
-   * @throws FileNotFoundException
-   */
   public static <T> List<T> readSheetSynchronously(File file, Class<T> clazz, int headRowNo, int sheetNo)
       throws FileNotFoundException {
     return readSheetSynchronously(new FileInputStream(file), clazz, headRowNo, sheetNo);
+  }
+
+  public static <T> List<T> readSheetSynchronously(InputStream is, Class<T> clazz, int headRowNo) {
+    return readSheetSynchronously(is, clazz, headRowNo, DEFAULT_SHEET_NO);
   }
 
   /**
@@ -89,22 +62,11 @@ public abstract class EasyExcelUtils {
     // 文件输入流会自动关闭
     return (List<T>) EasyExcel.read(is).sheet(sheetNo - 1).head(clazz).headRowNumber(headRowNo).autoTrim(true).doReadSync();
   }
+  
 
-  /**
-   * 异步读取Excel中的sheet，默认读取第一个sheet，从第二行读取(头部信息为一行)
-   * @param file 
-   * @param clazz 使用运行时类型为clazz的对象保存数据
-   * @param consumer 回调接口，默认每读batchCount行或者全部读取完毕会回调该接口
-   * @throws FileNotFoundException
-   */
-  public static <T> void readSheetAsynchronously(File file, Class<T> clazz, Consumer<List<T>> consumer)
+  public static <T> void readSheetAsynchronously(File file, Class<T> clazz, Consumer<List<T>> consumer, int headRowNo)
       throws FileNotFoundException {
-    readSheetAsynchronously(file, clazz, consumer, DEFAULT_SHEET_NO, DEFAULT_HEADROW_NO, DEFAULT_BATCH_COUNT);
-  }
-
-  public static <T> void readSheetAsynchronously(File file, Class<T> clazz, Consumer<List<T>> consumer, int batchCount)
-      throws FileNotFoundException {
-    readSheetAsynchronously(file, clazz, consumer, DEFAULT_SHEET_NO, DEFAULT_HEADROW_NO, batchCount);
+    readSheetAsynchronously(file, clazz, consumer, DEFAULT_SHEET_NO, headRowNo, DEFAULT_BATCH_COUNT);
   }
 
   public static <T> void readSheetAsynchronously(File file, Class<T> clazz, Consumer<List<T>> consumer, int sheetNo,
@@ -112,27 +74,14 @@ public abstract class EasyExcelUtils {
     readSheetAsynchronously(new FileInputStream(file), clazz, consumer, sheetNo, headRowNo, batchCount);
   }
 
-  public static <T> void readSheetAsynchronously(InputStream is, Class<T> clazz, Consumer<List<T>> consumer) {
-    readSheetAsynchronously(is, clazz, consumer, DEFAULT_SHEET_NO, DEFAULT_HEADROW_NO, DEFAULT_BATCH_COUNT);
+  public static <T> void readSheetAsynchronously(InputStream is, Class<T> clazz, Consumer<List<T>> consumer, int headRowNo) {
+    readSheetAsynchronously(is, clazz, consumer, DEFAULT_SHEET_NO, headRowNo, DEFAULT_BATCH_COUNT);
   }
-
-  public static <T> void readSheetAsynchronously(InputStream is, Class<T> clazz, Consumer<List<T>> consumer, int batchCount) {
-    readSheetAsynchronously(is, clazz, consumer, DEFAULT_SHEET_NO, DEFAULT_HEADROW_NO, batchCount);
-  }
-
-  /**
-   * 异步读取Excel中的sheet
-   * @param file 所在文件
-   * @param clazz 使用运行时类型为clazz的对象保存数据
-   * @param consumer 回调接口，每读batchCount行或者全部读取完毕会回调该接口
-   * @param sheetNo Excel中sheet编号，1代表第一个sheet
-   * @param headRowNo Excel中头部信息所占行数，为1则从第二行读取数据
-   * @param batchCount 每次读取最多保存到list的对象数量
-   */
+  
   public static <T> void readSheetAsynchronously(InputStream is, Class<T> clazz, Consumer<List<T>> consumer, int sheetNo,
       int headRowNo, int batchCount) {
     if (consumer == null) {
-      throw new IllegalArgumentException("The callback interface consumer cannot be null");
+      throw new IllegalArgumentException("The callback interface \"consumer\" cannot be null");
     }
 
     readSheetAsynchronously(is, clazz, new DefaultReadListener<T>(consumer, batchCount), sheetNo, headRowNo);
@@ -153,18 +102,11 @@ public abstract class EasyExcelUtils {
         .doRead();
   }
 
+  
   public static <T> void writeSheet(File dest, List<T> content, boolean needHead) throws FileNotFoundException {
     writeSheet(dest, content, DEFAULT_SHEET_NO, needHead);
   }
 
-  /**
-   * 写入到Excel的sheet中
-   * @param dest 写入哪个文件
-   * @param content 写入内容列表
-   * @param sheetNo Excel中sheet编号，1代表第一个sheet
-   * @param needHead 是否写入头部信息
-   * @throws FileNotFoundException 
-   */
   public static <T> void writeSheet(File dest, List<T> content, int sheetNo, boolean needHead) throws FileNotFoundException {
     writeSheet(new FileOutputStream(dest), content, sheetNo, needHead);
   }
@@ -172,7 +114,7 @@ public abstract class EasyExcelUtils {
   public static <T> void writeSheet(OutputStream dest, List<T> content, boolean needHead) {
     writeSheet(dest, content, DEFAULT_SHEET_NO, needHead);
   }
-
+  
   /**
    * 写入到Excel的sheet中
    * @param dest 输出目的地
@@ -181,18 +123,31 @@ public abstract class EasyExcelUtils {
    * @param needHead 是否写入头部信息
    */
   public static <T> void writeSheet(OutputStream dest, List<T> content, int sheetNo, boolean needHead) {
-    if (CollectionUtils.isEmpty(content)) {
-      return;
-    }
-
-    if (sheetNo <= 0) {
-      throw new IllegalArgumentException("SheetNo must be greater than 0");
-    }
-
+    validateParams(sheetNo);
     Class<?> clazz = content.get(0).getClass();
     // 写之前父目录一定要存在，不然会报错
-    EasyExcel.write(dest).head(clazz).sheet(sheetNo - 1).doWrite(content);
+    EasyExcel.write
+    (dest).head(clazz).sheet(sheetNo - 1).doWrite(content);
   }
+  
+  
+  public static <T> void batchWriteSheet(File dest, List<T> content, boolean needHead) throws FileNotFoundException {
+    batchWriteSheet(dest, content, DEFAULT_SHEET_NO, DEFAULT_BATCH_COUNT, needHead);
+  }
+
+  public static <T> void batchWriteSheet(File dest, List<T> content, int sheetNo, int batchNum, boolean needHead)
+      throws FileNotFoundException {
+    batchWriteSheet(new FileOutputStream(dest), content, sheetNo, batchNum, needHead);
+  }
+
+  public static <T> void batchWriteSheet(OutputStream dest, List<T> content, boolean needHead) {
+    batchWriteSheet(dest, content, DEFAULT_SHEET_NO, DEFAULT_BATCH_COUNT, needHead);
+  }
+
+  public static <T> void batchWriteSheet(OutputStream dest, List<T> content, int sheetNo, int batchNum, boolean needHead) {
+    doBatchWrite(dest, null, content, sheetNo, batchNum, needHead);
+  }
+  
 
   public static <T> void fillSheet(File dest, File template, List<T> content) throws FileNotFoundException {
     fillSheet(dest, template, content, DEFAULT_SHEET_NO);
@@ -214,21 +169,15 @@ public abstract class EasyExcelUtils {
    * @param sheetNo Excel中sheet编号，1代表第一个sheet
    */
   public static <T> void fillSheet(OutputStream dest, InputStream template, List<T> content, int sheetNo) {
-    if (CollectionUtils.isEmpty(content)) {
-      return;
-    }
-
-    if (sheetNo <= 0) {
-      throw new IllegalArgumentException("SheetNo must be greater than 0");
-    }
-
+    validateParams(sheetNo);
     Class<?> clazz = content.get(0).getClass();
     // 填充时不写入头部信息
     EasyExcel.write(dest).head(clazz).withTemplate(template).needHead(false).sheet(sheetNo - 1).doWrite(content);
   }
+  
 
-  public static <T> void batchFillSheet(File dest, File template, List<T> content, int batchNum) throws FileNotFoundException {
-    batchFillSheet(new FileOutputStream(dest), new FileInputStream(template), content, DEFAULT_SHEET_NO, batchNum);
+  public static <T> void batchFillSheet(File dest, File template, List<T> content) throws FileNotFoundException {
+    batchFillSheet(new FileOutputStream(dest), new FileInputStream(template), content, DEFAULT_SHEET_NO, DEFAULT_BATCH_COUNT);
   }
 
   public static <T> void batchFillSheet(File dest, File template, List<T> content, int sheetNo, int batchNum)
@@ -236,8 +185,8 @@ public abstract class EasyExcelUtils {
     batchFillSheet(new FileOutputStream(dest), new FileInputStream(template), content, sheetNo, batchNum);
   }
 
-  public static <T> void batchFillSheet(OutputStream dest, InputStream template, List<T> content, int batchNum) {
-    batchFillSheet(dest, template, content, DEFAULT_SHEET_NO, batchNum);
+  public static <T> void batchFillSheet(OutputStream dest, InputStream template, List<T> content) {
+    batchFillSheet(dest, template, content, DEFAULT_SHEET_NO, DEFAULT_BATCH_COUNT);
   }
 
   /**
@@ -249,27 +198,24 @@ public abstract class EasyExcelUtils {
    * @param batchNum 分几批处理
    */
   public static <T> void batchFillSheet(OutputStream dest, InputStream template, List<T> content, int sheetNo, int batchNum) {
+    doBatchWrite(dest, template, content, sheetNo, batchNum, false);
+  }
+  
+  
+
+  private static <T> void doBatchWrite(OutputStream dest, InputStream template, List<T> content, int sheetNo, int batchNum,
+      boolean needHead) {
+    if (sheetNo <= 0 || batchNum <= 0) {
+      throw new IllegalArgumentException("sheetNo and batchNum must be greater than 0");
+    }
+    
     if (CollectionUtils.isEmpty(content)) {
       return;
     }
 
-    doBatchWrite(dest, template, content, sheetNo, batchNum);
-  }
-
-  private static void validateParams(int headRowNo, int sheetNo) {
-    if (headRowNo <= 0 || sheetNo <= 0) {
-      throw new IllegalArgumentException("HeadRowNo and sheetNo must be greater than 0");
-    }
-  }
-
-  private static <T> void doBatchWrite(OutputStream dest, InputStream template, List<T> content, int sheetNo, int batchNum) {
-    if (sheetNo <= 0 || batchNum <= 0) {
-      throw new IllegalArgumentException("SheetNo and batchNum must be greater than 0");
-    }
-
     ExcelWriterBuilder builder = EasyExcel.write(dest);
     ExcelWriter writer = (template != null) ? builder.withTemplate(template).build() : builder.build();
-    WriteSheet sheet = EasyExcel.writerSheet(sheetNo - 1).head(content.get(0).getClass()).needHead(false).build();
+    WriteSheet sheet = EasyExcel.writerSheet(sheetNo - 1).head(content.get(0).getClass()).needHead(needHead).build();
 
     int toIndex = 0;
     int size = content.size();
@@ -283,6 +229,18 @@ public abstract class EasyExcelUtils {
     content.clear();
     // 写完后关闭流
     writer.finish();
+  }
+
+  private static void validateParams(int sheetNo) {
+    if (sheetNo <= 0) {
+      throw new IllegalArgumentException("sheetNo must be greater than 0");
+    }
+  }
+
+  private static void validateParams(int headRowNo, int sheetNo) {
+    if (headRowNo <= 0 || sheetNo <= 0) {
+      throw new IllegalArgumentException("headRowNo and sheetNo must be greater than 0");
+    }
   }
 
   /**

@@ -278,6 +278,7 @@ public abstract class EasyExcelUtils {
       LOGGER.info("Begin to read sheet,current sheet's name is: {}", context.readSheetHolder().getSheetName());
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
       LOGGER.info("Sheet has been all read,total count is: {}", context.readSheetHolder().getTotal());

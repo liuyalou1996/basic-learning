@@ -1,4 +1,4 @@
-package com.universe.jdkapi.threadpool;
+package com.universe.jdkapi.thread.pool;
 
 import java.util.Random;
 import java.util.concurrent.Callable;

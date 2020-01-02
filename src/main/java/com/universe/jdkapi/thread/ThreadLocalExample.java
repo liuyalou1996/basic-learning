@@ -1,4 +1,4 @@
-package com.universe.jdkapi.threadpool;
+package com.universe.jdkapi.thread;
 
 /**
  * ThreadLocal意为线程局部变量，为每一个使用该变量的线程都提供一个变量值的副本，使每一个线程都可以独立地改变自己的副本，而不会和其它线程的副本冲突

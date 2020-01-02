@@ -10,7 +10,7 @@ import java.util.concurrent.SynchronousQueue;
  * 3、SyschromousQueue无容量，只有当执行删除操作即调用take()方法才能获取插入的元素，调用peek()会返回空值。
  * 4、可选的公平策略，如果设为true，则线程以FIFO的顺序访问;
  */
-public class SyncronousQueueExample {
+public class SynchronousQueueExample {
 
   static class ProducerThread extends Thread {
 

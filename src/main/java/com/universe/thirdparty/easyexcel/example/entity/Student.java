@@ -1,18 +1,18 @@
 package com.universe.thirdparty.easyexcel.example.entity;
 
-import java.util.Date;
-
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.annotation.write.style.HeadRowHeight;
 
+import java.util.Date;
+
 @HeadRowHeight(20)
 @ColumnWidth(10)
 public class Student {
 
-  @ExcelProperty(index = 0, value = "学号")
+  @ExcelProperty(index = 0, value = "年龄")
   private int age;
 
   @ExcelProperty(index = 1, value = "姓名")

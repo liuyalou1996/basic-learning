@@ -3,8 +3,8 @@ package com.universe.thirdparty.easyexcel.example;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import com.universe.jdkapi.jdk8.datetime.DateUtils;
-import com.universe.jdkapi.jdk8.datetime.DateUtils.Pattern;
+import com.universe.jdkapi.jdk8.datetime.DateTimeUtils;
+import com.universe.jdkapi.jdk8.datetime.DateTimeUtils.Pattern;
 import com.universe.thirdparty.easyexcel.example.entity.Student;
 
 import java.io.File;
@@ -75,7 +75,7 @@ public class WriteExcelExample {
 	}
 
 	private static String generateFileName() {
-		return DateUtils.format(LocalDateTime.now(), Pattern.DATE_TIME_MILLS_WITHOUT_STRIKE) + ".xlsx";
+		return DateTimeUtils.format(LocalDateTime.now(), Pattern.DATE_TIME_MILLS_WITHOUT_STRIKE) + ".xlsx";
 	}
 
 	public static void main(String[] args) {

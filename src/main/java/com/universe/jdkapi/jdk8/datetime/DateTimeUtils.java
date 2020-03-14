@@ -2,16 +2,22 @@ package com.universe.jdkapi.jdk8.datetime;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalQuery;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class DateTimeUtils {
+/**
+ * @author 刘亚楼
+ * @date 2020/3/13
+ */
+public class DateTimeUtils {
 
 	private static final ZoneId SYSTEM_DEFAULT_ZONEID = ZoneId.systemDefault();
 
@@ -22,51 +28,34 @@ public abstract class DateTimeUtils {
 		return format(localDateTime, pattern);
 	}
 
-	public static String format(TemporalAccessor temporal, Pattern pattern) {
-		DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat());
-		return formatter.format(temporal);
+	public static LocalDate parseToLocalDate(String text, Pattern pattern) {
+		return parse(text, pattern, LocalDate::from);
 	}
 
-	public static String format(Date date, String pattern) {
-		LocalDateTime localDateTime = dateToLocalDateTime(date);
-		return format(localDateTime, pattern);
+	public static LocalDateTime parseToLocalDateTime(String text, Pattern pattern) {
+		return parse(text, pattern, LocalDateTime::from);
 	}
 
 	/**
 	 * 将时间或日期转换为字符串，转换模式必须与TemporalAccessor保持一致
-	 * @param temporal TemporalAccessor实例，主要有LocalTime、LocalDate和LocalDateTime
+	 * @param temporal Temporal实例，主要有LocalTime、LocalDate和LocalDateTime
 	 * @param pattern 转换模式，和SimpleDateFormat一致
 	 * @return 格式化日期字符串
 	 */
-	public static String format(TemporalAccessor temporal, String pattern) {
-		DateTimeFormatter formatter = getDateTimeFormatter(pattern);
-		return formatter.format(temporal);
-	}
-
-	public static Date parse(String text, Pattern pattern) {
-		LocalDateTime localDateTime = parse(text, pattern, LocalDateTime::from);
-		return localDateTimeToDate(localDateTime);
-	}
-
-	public static <T> T parse(String text, Pattern pattern, TemporalQuery<T> query) {
+	public static String format(Temporal temporal, Pattern pattern) {
 		DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat());
-		return formatter.parse(text, query);
-	}
-
-	public static Date parse(String text, String pattern) {
-		LocalDateTime localDateTime = parse(text, pattern, LocalDateTime::from);
-		return localDateTimeToDate(localDateTime);
+		return formatter.format(temporal);
 	}
 
 	/**
 	 * 将时间或日期字符串转换为时间或日期，时间或日期字符串、转换格式、TemporalQuery必须保持一致
 	 * @param text 时间或日期字符串
-	 * @param pattern 转换模式，和SimpleDateFormat一致
+	 * @param pattern 转换模式，通过Pattern.of("yyyyMMdd")实例化，格式和SimpleDateFormat一致
 	 * @param query 函数式接口，通过LocalTime、LocalDate、LocalDateTime的静态方法from()可实现，如LocalDate::from
 	 * @return LocalTime、LocalDate、LocalDateTime实例
 	 */
-	public static <T> T parse(String text, String pattern, TemporalQuery<T> query) {
-		DateTimeFormatter formatter = getDateTimeFormatter(pattern);
+	public static <T> T parse(String text, Pattern pattern, TemporalQuery<T> query) {
+		DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat());
 		return formatter.parse(text, query);
 	}
 
@@ -81,12 +70,31 @@ public abstract class DateTimeUtils {
 	}
 
 	/**
+	 * Date转LocalDate实例
+	 * @param date
+	 * @return
+	 */
+	public static LocalDate dateToLocaLocalDate(Date date) {
+		return dateToLocalDateTime(date).toLocalDate();
+	}
+
+	/**
 	 * LocalDateTime实例转Date实例
 	 * @param localDateTime
 	 * @return Date实例
 	 */
 	public static Date localDateTimeToDate(LocalDateTime localDateTime) {
 		Instant instant = localDateTime.atZone(SYSTEM_DEFAULT_ZONEID).toInstant();
+		return Date.from(instant);
+	}
+
+	/**
+	 * LocalDate实例转Date实例
+	 * @param localDate
+	 * @return Date实例
+	 */
+	public static Date localDateToDate(LocalDate localDate) {
+		Instant instant = localDate.atStartOfDay().atZone(SYSTEM_DEFAULT_ZONEID).toInstant();
 		return Date.from(instant);
 	}
 
@@ -135,29 +143,33 @@ public abstract class DateTimeUtils {
 		return System.currentTimeMillis() / 1000;
 	}
 
-	public static boolean isBefore(LocalDateTime former, LocalDateTime latter) {
-		return former.isBefore(latter);
+	/**
+	 * 计算月份差，Temporal实例有LocalDate、LocalDateTime等
+	 * @param former
+	 * @param latter
+	 * @return
+	 */
+	public static long monthsBetween(Temporal former, Temporal latter) {
+		return ChronoUnit.MONTHS.between(former, latter);
 	}
 
-	public static boolean isAfter(LocalDateTime former, LocalDateTime latter) {
-		return former.isAfter(latter);
-	}
-
-	public static boolean isEqual(LocalDateTime former, LocalDateTime latter) {
-		return former.isEqual(latter);
-	}
-
-	public static int monthsBetween(LocalDateTime former, LocalDateTime latter) {
-		return (latter.getYear() - former.getYear()) * 12 + (latter.getMonthValue() - former.getMonthValue());
-	}
-
-	public static long daysBetween(LocalDateTime former, LocalDateTime latter) {
-		// ChronoUnit.DAYS.between(former, latter);
+	/**
+	 * 计算日期差，Temporal实例有LocalDate、LocalDateTime等
+	 * @param former
+	 * @param latter
+	 * @return
+	 */
+	public static long daysBetween(Temporal former, Temporal latter) {
 		return Duration.between(former, latter).toDays();
 	}
 
-	public static long hoursBetween(LocalDateTime former, LocalDateTime latter) {
-		// ChronoUnit.HOURS.between(former, latter);
+	/**
+	 * 计算时间差，Temporal实例有LocalDate、LocalDateTime等
+	 * @param former
+	 * @param latter
+	 * @return
+	 */
+	public static long hoursBetween(Temporal former, Temporal latter) {
 		return Duration.between(former, latter).toHours();
 	}
 
@@ -200,5 +212,4 @@ public abstract class DateTimeUtils {
 			return "Pattern [format=" + format + "]";
 		}
 	}
-
 }

@@ -1,6 +1,5 @@
 package com.universe.jdkapi.jdk8.datetime;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -160,7 +159,7 @@ public class DateTimeUtils {
 	 * @return
 	 */
 	public static long daysBetween(Temporal former, Temporal latter) {
-		return Duration.between(former, latter).toDays();
+		return ChronoUnit.DAYS.between(former, latter);
 	}
 
 	/**
@@ -170,7 +169,7 @@ public class DateTimeUtils {
 	 * @return
 	 */
 	public static long hoursBetween(Temporal former, Temporal latter) {
-		return Duration.between(former, latter).toHours();
+		return ChronoUnit.HOURS.between(former, latter);
 	}
 
 	private static DateTimeFormatter getDateTimeFormatter(String pattern) {

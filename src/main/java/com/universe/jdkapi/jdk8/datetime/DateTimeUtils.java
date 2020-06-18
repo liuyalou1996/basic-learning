@@ -184,14 +184,14 @@ public class DateTimeUtils {
 
 	public static class Pattern {
 
-		public static final Pattern YEAR_TO_DAY_WITHOUT_STRIKE = Pattern.of("yyyyMMdd");
+		public static final Pattern YEAR_TO_DAY = Pattern.of("yyyyMMdd");
 		public static final Pattern YEAR_TO_DAY_WITH_STRIKE = Pattern.of("yyyy-MM-dd");
 		public static final Pattern YEAR_TO_DAY_WITH_SLASH = Pattern.of("yyyy/MM/dd");
 		public static final Pattern YEAR_TO_SECOND_WITH_STRIKE = Pattern.of("yyyy-MM-dd HH:mm:ss");
-		public static final Pattern YEAR_TO_SECOND_WITHOUT_STRIKE = Pattern.of("yyyyMMddHHmmss");
+		public static final Pattern YEAR_TO_SECOND = Pattern.of("yyyyMMddHHmmss");
 		public static final Pattern YEAR_TO_MILLIS_WITH_STRIKE = Pattern.of("yyyy-MM-dd HH:mm:ss.SSS");
-		public static final Pattern YEAR_TO_MILLIS_WITHOUT_STRIKE = Pattern.of("yyyyMMddHHmmssSSS");
-		public static final Pattern MONTH_TO_SECOND_WITHOUT_STRIKE = Pattern.of("MMddHHmmss");
+		public static final Pattern YEAR_TO_MILLIS = Pattern.of("yyyyMMddHHmmssSSS");
+		public static final Pattern MONTH_TO_SECOND = Pattern.of("MMddHHmmss");
 
 		private String format;
 

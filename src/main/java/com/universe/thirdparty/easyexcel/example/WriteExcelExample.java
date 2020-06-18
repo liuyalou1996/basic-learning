@@ -75,7 +75,7 @@ public class WriteExcelExample {
 	}
 
 	private static String generateFileName() {
-		return DateTimeUtils.format(LocalDateTime.now(), Pattern.YEAR_TO_MILLIS_WITHOUT_STRIKE) + ".xlsx";
+		return DateTimeUtils.format(LocalDateTime.now(), Pattern.YEAR_TO_MILLIS) + ".xlsx";
 	}
 
 	public static void main(String[] args) {

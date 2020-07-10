@@ -18,9 +18,12 @@ public class StreamOpTest {
 
 	private static List<Student> students = new ArrayList<>();
 
+	private static List<Student> redundantStudent = new ArrayList<>();
+
 	static {
 		for (int count = 0; count < 5; count++) {
 			students.add(new Student("student" + count, count, Arrays.asList(new Hobby("hobby" + count))));
+			redundantStudent.add(new Student("student" + (count % 2), count % 2));
 		}
 	}
 
@@ -57,7 +60,7 @@ public class StreamOpTest {
 		// filter方法可通过设置的条件进行过滤
 		List<String> names = Arrays.asList("lyl", "", "lq", "zxq", "wm");
 		List<String> filteredList =
-			names.stream().filter(StringUtils::isNotEmpty).sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+						names.stream().filter(StringUtils::isNotEmpty).sorted(Comparator.reverseOrder()).collect(Collectors.toList());
 		System.out.println(filteredList);
 	}
 
@@ -75,6 +78,11 @@ public class StreamOpTest {
 
 		Map<String, Integer> studentMap = students.stream().collect(Collectors.toMap(Student::getName, Student::getAge));
 		System.out.println("转换为map:" + studentMap);
+
+		// 重复key会报错，当重复时取最新值
+		Map<String, Integer> redundantStudentMap =
+						students.stream().collect(Collectors.toMap(Student::getName, Student::getAge, (oldValue, newValue) -> oldValue));
+		System.out.println("转换重复key的map：" + redundantStudentMap);
 	}
 
 	/**

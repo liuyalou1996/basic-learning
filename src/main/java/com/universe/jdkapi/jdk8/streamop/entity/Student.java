@@ -8,9 +8,14 @@ import java.util.List;
  */
 public class Student {
 
-	String name;
-	Integer age;
-	List<Hobby> hobbies;
+	private String name;
+	private Integer age;
+	private List<Hobby> hobbies;
+
+	public Student(String name, Integer age) {
+		this.name = name;
+		this.age = age;
+	}
 
 	public Student(String name, Integer age, List<Hobby> hobbies) {
 		this.name = name;

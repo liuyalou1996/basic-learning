@@ -64,6 +64,9 @@ public class DateTimeUtils {
 	 * @return LocalDateTime实例
 	 */
 	public static LocalDateTime dateToLocalDateTime(Date date) {
+		if (date == null) {
+			return null;
+		}
 		Instant instant = date.toInstant();
 		return instant.atZone(SYSTEM_DEFAULT_ZONEID).toLocalDateTime();
 	}
@@ -73,7 +76,10 @@ public class DateTimeUtils {
 	 * @param date
 	 * @return
 	 */
-	public static LocalDate dateToLocaLocalDate(Date date) {
+	public static LocalDate dateToLocalDate(Date date) {
+		if (date == null) {
+			return null;
+		}
 		return dateToLocalDateTime(date).toLocalDate();
 	}
 
@@ -122,6 +128,9 @@ public class DateTimeUtils {
 	 * @return
 	 */
 	public static long dateToTimestamp(Date date) {
+		if (date == null) {
+			throw new IllegalArgumentException("Param is null");
+		}
 		return date.getTime();
 	}
 

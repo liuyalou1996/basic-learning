@@ -1,16 +1,15 @@
 package com.universe.thirdparty.fastjson;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializeFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * json字符串与java bean转换工具类
@@ -18,6 +17,10 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
  * @date: 2019年10月29日
  */
 public class JsonUtils {
+
+  public static String toJsonString(Object obj) {
+    return toJsonString(obj, null, false, false);
+  }
 
   public static String toJsonString(Object obj, SerializeFilter... filters) {
     return toJsonString(obj, null, false, false, filters);
@@ -50,6 +53,9 @@ public class JsonUtils {
   public static String toPrettyJsonStringWithDateFormatAndNullValue(Object obj, String dateFormat, SerializeFilter... filters) {
     return toJsonString(obj, dateFormat, true, true, filters);
   }
+
+
+
 
   public static String toJsonString(Object obj, String dateFormat, boolean writeNullValue, boolean prettyFormat,
       SerializeFilter... filters) {

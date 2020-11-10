@@ -152,11 +152,17 @@
             <artifactId>flying-saucer-core</artifactId>
             <version>9.1.20</version>
         </dependency>
-        <!--htmo转pdf-->
+        <!--html转pdf-->
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-pdf</artifactId>
             <version>9.1.20</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.11.0</version>
         </dependency>
     </dependencies>
 

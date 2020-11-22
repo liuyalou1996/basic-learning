@@ -9,7 +9,9 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalQuery;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,38 +25,56 @@ public class DateTimeUtils {
 	private static final Map<String, DateTimeFormatter> FORMATTER_CACHE = new ConcurrentHashMap<>();
 
 	public static String format(Date date, Pattern pattern) {
+		return format(date, pattern, null);
+	}
+
+	public static String format(Date date, Pattern pattern, Locale locale) {
 		LocalDateTime localDateTime = dateToLocalDateTime(date);
-		return format(localDateTime, pattern);
+		return format(localDateTime, pattern, locale);
 	}
 
-	public static LocalDate parseToLocalDate(String text, Pattern pattern) {
-		return parse(text, pattern, LocalDate::from);
-	}
-
-	public static LocalDateTime parseToLocalDateTime(String text, Pattern pattern) {
-		return parse(text, pattern, LocalDateTime::from);
+	public static String format(Temporal temporal, Pattern pattern) {
+		return format(temporal, pattern, null);
 	}
 
 	/**
 	 * 将时间或日期转换为字符串，转换模式必须与TemporalAccessor保持一致
 	 * @param temporal Temporal实例，主要有LocalTime、LocalDate和LocalDateTime
 	 * @param pattern 转换模式，和SimpleDateFormat一致
+	 * @param locale 地理区域
 	 * @return 格式化日期字符串
 	 */
-	public static String format(Temporal temporal, Pattern pattern) {
-		DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat());
+	public static String format(Temporal temporal, Pattern pattern, Locale locale) {
+		DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat(), locale);
 		return formatter.format(temporal);
+	}
+
+	public static LocalDate parseToLocalDate(String text, Pattern pattern) {
+		return parseToLocalDate(text, pattern, null);
+	}
+
+	public static LocalDate parseToLocalDate(String text, Pattern pattern, Locale locale) {
+		return parse(text, pattern, locale, LocalDate::from);
+	}
+
+	public static LocalDateTime parseToLocalDateTime(String text, Pattern pattern) {
+		return parseToLocalDateTime(text, pattern, null);
+	}
+
+	public static LocalDateTime parseToLocalDateTime(String text, Pattern pattern, Locale locale) {
+		return parse(text, pattern, locale, LocalDateTime::from);
 	}
 
 	/**
 	 * 将时间或日期字符串转换为时间或日期，时间或日期字符串、转换格式、TemporalQuery必须保持一致
 	 * @param text 时间或日期字符串
 	 * @param pattern 转换模式，通过Pattern.of("yyyyMMdd")实例化，格式和SimpleDateFormat一致
+	 * @param locale 地理区域
 	 * @param query 函数式接口，通过LocalTime、LocalDate、LocalDateTime的静态方法from()可实现，如LocalDate::from
 	 * @return LocalTime、LocalDate、LocalDateTime实例
 	 */
-	public static <T> T parse(String text, Pattern pattern, TemporalQuery<T> query) {
-		DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat());
+	public static <T> T parse(String text, Pattern pattern, Locale locale, TemporalQuery<T> query) {
+		DateTimeFormatter formatter = getDateTimeFormatter(pattern.getFormat(), locale);
 		return formatter.parse(text, query);
 	}
 
@@ -181,10 +201,11 @@ public class DateTimeUtils {
 		return ChronoUnit.HOURS.between(former, latter);
 	}
 
-	private static DateTimeFormatter getDateTimeFormatter(String pattern) {
+	private static DateTimeFormatter getDateTimeFormatter(String pattern, Locale locale) {
 		DateTimeFormatter formatter = FORMATTER_CACHE.get(pattern);
 		if (formatter == null) {
-			formatter = DateTimeFormatter.ofPattern(pattern);
+			locale = Optional.ofNullable(locale).orElse(Locale.getDefault(Locale.Category.FORMAT));
+			formatter = DateTimeFormatter.ofPattern(pattern, locale);
 			FORMATTER_CACHE.put(pattern, formatter);
 		}
 

@@ -2,12 +2,14 @@ package com.universe.jdkapi.jdk8.streamop;
 
 import com.universe.jdkapi.jdk8.streamop.entity.Hobby;
 import com.universe.jdkapi.jdk8.streamop.entity.Student;
+import com.universe.thirdparty.fastjson.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.IntSummaryStatistics;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -89,8 +91,9 @@ public class StreamOpTest {
 	 * 通过实例某个字段进行分组
 	 */
 	public static void useGroupingBy() {
-		Map<String, List<Student>> map = students.stream().collect(Collectors.groupingBy(Student::getName));
-		System.out.println(map);
+		Map<String, List<Student>> map = students.stream()
+			.collect(Collectors.groupingBy(Student::getName, LinkedHashMap::new, Collectors.toList()));
+		System.out.println(JsonUtils.toPrettyJsonString(map));
 	}
 
 	/**
@@ -122,6 +125,6 @@ public class StreamOpTest {
 	}
 
 	public static void main(String[] args) {
-		useCollectors();
+		useGroupingBy();
 	}
 }

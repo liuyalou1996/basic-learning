@@ -12,6 +12,7 @@ import java.util.IntSummaryStatistics;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,9 +82,10 @@ public class StreamOpTest {
 		Map<String, Integer> studentMap = students.stream().collect(Collectors.toMap(Student::getName, Student::getAge));
 		System.out.println("转换为map:" + studentMap);
 
-		// 重复key会报错，当重复时取最新值
-		Map<String, Integer> redundantStudentMap =
-						students.stream().collect(Collectors.toMap(Student::getName, Student::getAge, (oldValue, newValue) -> oldValue));
+		// 1-重复key会报错，当重复时取最新值 2-当值为空时，会报空指针异常
+		Map<String, Integer> redundantStudentMap = students.stream()
+			.filter(student -> !Objects.isNull(student.getAge()))
+			.collect(Collectors.toMap(Student::getName, Student::getAge, (oldValue, newValue) -> oldValue));
 		System.out.println("转换重复key的map：" + redundantStudentMap);
 	}
 
@@ -125,6 +127,6 @@ public class StreamOpTest {
 	}
 
 	public static void main(String[] args) {
-		useGroupingBy();
+		useCollectors();
 	}
 }

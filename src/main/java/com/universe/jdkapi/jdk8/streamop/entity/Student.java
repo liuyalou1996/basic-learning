@@ -37,6 +37,6 @@ public class Student {
 
 	@Override
 	public String toString() {
-		return "Student [name=" + name + ", hobbies=" + hobbies + "]";
+		return "Student{" + "name='" + name + '\'' + ", age=" + age + ", hobbies=" + hobbies + '}';
 	}
 }

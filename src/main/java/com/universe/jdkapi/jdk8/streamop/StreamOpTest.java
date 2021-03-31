@@ -26,7 +26,7 @@ public class StreamOpTest {
 	static {
 		for (int count = 0; count < 5; count++) {
 			students.add(new Student("student" + count, count, Arrays.asList(new Hobby("hobby" + count))));
-			redundantStudent.add(new Student("student" + (count % 2), count % 2));
+			redundantStudent.add(new Student("student" + (count % 2), count));
 		}
 	}
 
@@ -82,8 +82,9 @@ public class StreamOpTest {
 		Map<String, Integer> studentMap = students.stream().collect(Collectors.toMap(Student::getName, Student::getAge));
 		System.out.println("转换为map:" + studentMap);
 
+		System.out.println(redundantStudent);
 		// 1-重复key会报错，当重复时取最新值 2-当值为空时，会报空指针异常
-		Map<String, Integer> redundantStudentMap = students.stream()
+		Map<String, Integer> redundantStudentMap = redundantStudent.stream()
 			.filter(student -> !Objects.isNull(student.getAge()))
 			.collect(Collectors.toMap(Student::getName, Student::getAge, (oldValue, newValue) -> oldValue));
 		System.out.println("转换重复key的map：" + redundantStudentMap);

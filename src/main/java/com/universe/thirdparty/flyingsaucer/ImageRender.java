@@ -21,15 +21,16 @@ public class ImageRender {
 		File orginalDest = new File(basePath, "original.png");
 		File g2drDest = new File(basePath, "G2DR.png");
 
-		// 这种方式CSS样式会不支持
+		// 有些css样式不支持，如背景颜色
 		Java2DRenderer renderer = new Java2DRenderer(source, 1024);
-		renderer.setBufferedImageType(BufferedImage.TYPE_INT_ARGB);
-		BufferedImage image = renderer.getImage();
-		FSImageWriter imageWriter = new FSImageWriter();
-		imageWriter.write(image, orginalDest.toString());
+		renderer.setBufferedImageType(BufferedImage.TYPE_INT_RGB);
+		BufferedImage java2dImage = renderer.getImage();
+		new FSImageWriter().write(java2dImage, orginalDest.toString());
 
-		// 支持CSS样式
-		BufferedImage img = Graphics2DRenderer.renderToImageAutoSize(source.toURI().toURL().toExternalForm(), 1024, BufferedImage.TYPE_INT_ARGB);
-		ImageIO.write(img, "png", g2drDest);
+		System.out.println(source.toURI().toURL().toExternalForm());
+
+		// 支持css样式，如背景颜色
+		BufferedImage g2drImage = Graphics2DRenderer.renderToImageAutoSize(source.toURI().toURL().toExternalForm(), 1024, BufferedImage.TYPE_INT_ARGB);
+		ImageIO.write(g2drImage, "png", g2drDest);
 	}
 }

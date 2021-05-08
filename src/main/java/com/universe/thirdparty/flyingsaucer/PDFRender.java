@@ -1,6 +1,6 @@
 package com.universe.thirdparty.flyingsaucer;
 
-import com.lowagie.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.BaseFont;
 import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
@@ -23,15 +23,10 @@ public class PDFRender {
 		try (OutputStream os = new FileOutputStream(dest)) {
 			ITextRenderer renderer = new ITextRenderer();
 			ITextFontResolver fontResolver = renderer.getFontResolver();
-			// 必须添加能支持中文的字体，否则html内容有中文会不显示,同时body标签要设置font-family: SimSun
+			// 必须添加能支持中文的字体，否则html内容有中文会不显示，同时body标签要设置font-family: SimSun
 			String fontPath = PDFRender.class.getResource("/font/simsun.ttc").getPath();
 			fontResolver.addFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
 
-			// ITextUserAgent callback = new ITextUserAgent(renderer.getOutputDevice());
-			// callback.setSharedContext(renderer.getSharedContext());
-			// renderer.getSharedContext().setUserAgentCallback(callback);
-			// Document document = XMLResource.load(new InputSource(source)).getDocument();
-			// renderer.setDocument(document, source);
 			renderer.setDocument(new File(source));
 			renderer.layout();
 			renderer.createPDF(os);

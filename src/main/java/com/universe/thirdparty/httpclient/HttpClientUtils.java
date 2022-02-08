@@ -49,11 +49,8 @@ public class HttpClientUtils {
 		connectionManager.setMaxTotal(500);
 		// 每个路由(即ip+端口)最大连接数，默认为2
 		connectionManager.setDefaultMaxPerRoute(50);
-		RequestConfig requestConfig = RequestConfig.custom()
-						.setConnectTimeout(3000)
-						.setSocketTimeout(5000)
-						.setConnectionRequestTimeout(1000)
-						.build();
+		RequestConfig requestConfig =
+			RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(5000).setConnectionRequestTimeout(1000).build();
 		DEFAULT_CLIENT = HttpClients.custom().setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfig).build();
 	}
 
@@ -140,8 +137,6 @@ public class HttpClientUtils {
 			}
 
 			return resp;
-		} catch (IOException e) {
-			throw e;
 		}
 
 	}

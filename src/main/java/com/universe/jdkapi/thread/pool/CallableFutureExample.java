@@ -17,33 +17,34 @@ import java.util.concurrent.FutureTask;
  */
 public class CallableFutureExample {
 
-  public static void simpleUsage() throws Exception {
-    Callable<Integer> callable = () -> new Random().nextInt(1000);
-    FutureTask<Integer> task = new FutureTask<>(callable);
-    new Thread(task).start();
-    System.out.println(task.get());
-  }
+	public static void simpleUsage() throws Exception {
+		Callable<Integer> callable = () -> new Random().nextInt(1000);
+		FutureTask<Integer> task = new FutureTask<>(callable);
+		new Thread(task).start();
+		System.out.println(task.get());
+	}
 
-  public static void combineWithExecutorService() throws Exception {
-    ExecutorService executor = Executors.newCachedThreadPool();
-    Future<Integer> future = executor.submit(() -> new Random().nextInt(1000));
-    System.out.println(future.get());
-  }
+	public static void combineWithExecutorService() throws Exception {
+		ExecutorService executor = Executors.newCachedThreadPool();
+		Future<Integer> future = executor.submit(() -> new Random().nextInt(1000));
+		System.out.println(future.get());
+	}
 
-  public static void combineWithCompletionService() throws Exception {
-    ExecutorService executor = Executors.newCachedThreadPool();
-    CompletionService<Integer> service = new ExecutorCompletionService<>(executor);
-    for (int count = 0; count < 10; count++) {
-      int taskId = count + 1;
-      service.submit(() -> taskId);
-    }
-    for (int count = 0; count < 10; count++) {
-      // 根据完成的顺序取出结果
-      System.out.println("执行结果为：" + service.take().get());
-    }
-  }
+	public static void combineWithCompletionService() throws Exception {
+		ExecutorService executor = Executors.newCachedThreadPool();
+		CompletionService<Integer> service = new ExecutorCompletionService<>(executor);
+		for (int count = 0; count < 10; count++) {
+			int taskId = count + 1;
+			service.submit(() -> taskId);
+		}
+		for (int count = 0; count < 10; count++) {
+			// 根据完成的顺序取出结果
+			System.out.println("执行结果为：" + service.take().get());
+		}
+		executor.shutdown();
+	}
 
-  public static void main(String[] args) throws Exception {
-    combineWithCompletionService();
-  }
+	public static void main(String[] args) throws Exception {
+		combineWithCompletionService();
+	}
 }

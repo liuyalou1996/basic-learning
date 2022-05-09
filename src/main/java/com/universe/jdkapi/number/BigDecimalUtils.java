@@ -48,110 +48,168 @@ public class BigDecimalUtils {
 		return value.setScale(scale, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
 	}
 
-	/**
-	 * 两数相除保留精度(有效位)，舍入规则默认四舍五入
-	 * @param value
-	 * @param divisor
-	 * @param precision
-	 * @return
-	 */
-	public static BigDecimal dividePrecisely(BigDecimal value, BigDecimal divisor, int precision) {
-		return dividePrecisely(value, divisor, precision, null);
+	public static BigDecimal add(BigDecimal addend, BigDecimal augend, int scale) {
+		return add(addend, augend, scale, null);
 	}
 
 	/**
-	 * 两数相除保留精度(有效位)
-	 * @param value
-	 * @param divisor 除数
-	 * @param precision 精度
+	 * 两数相加保留小数位
+	 * @param addend 加数
+	 * @param augend 被加数
+	 * @param scale 小数位
 	 * @param roundingMode 舍入模式
 	 * @return
 	 */
-	public static BigDecimal dividePrecisely(BigDecimal value, BigDecimal divisor, int precision, RoundingMode roundingMode) {
-		if (value == null) {
-			return null;
-		}
-		MathContext mc = new MathContext(precision, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
-		return value.divide(divisor, mc);
-	}
-
-	public static BigDecimal divideScalably(BigDecimal value, BigDecimal divisor, int scale) {
-		return divideScalably(value, divisor, scale, null);
-	}
-
-	/**
-	 * 两数相除保留小数位
-	 * @param value
-	 * @param divisor 除数
-	 * @param scale 小数位数
-	 * @param roundingMode 舍入模式
-	 * @return
-	 */
-	public static BigDecimal divideScalably(BigDecimal value, BigDecimal divisor, int scale, RoundingMode roundingMode) {
-		if (value == null) {
+	public static BigDecimal add(BigDecimal addend, BigDecimal augend, int scale, RoundingMode roundingMode) {
+		if (addend == null) {
 			return null;
 		}
 
-		return value.divide(divisor, scale, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
+		BigDecimal decimal = addend.add(augend);
+		return toScaledBigDecimal(decimal, scale, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
 	}
 
-	public static BigDecimal multiplyPrecisely(BigDecimal value, BigDecimal multiplicand, int precision) {
-		return multiplyPrecisely(value, multiplicand, precision, null);
-	}
-
-	/**
-	 * 两数相乘保留精度
-	 * @param value
-	 * @param multiplicand 乘数
-	 * @param precision 精度
-	 * @param roundingMode 舍入模式
-	 * @return
-	 */
-	public static BigDecimal multiplyPrecisely(BigDecimal value, BigDecimal multiplicand, int precision, RoundingMode roundingMode) {
-		if (value == null) {
-			return null;
-		}
-		MathContext mc = new MathContext(precision, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
-		return value.multiply(multiplicand, mc);
-	}
-
-	public static BigDecimal subtractPrecisely(BigDecimal value, BigDecimal subtrahend, int precision) {
-		return subtractPrecisely(value, subtrahend, precision, null);
-	}
-
-	/**
-	 * 两数相乘保留精度
-	 * @param value
-	 * @param subtrahend 被乘数
-	 * @param precision 精度
-	 * @param roundingMode 舍入模式
-	 * @return
-	 */
-	public static BigDecimal subtractPrecisely(BigDecimal value, BigDecimal subtrahend, int precision, RoundingMode roundingMode) {
-		if (value == null) {
-			return null;
-		}
-		MathContext mc = new MathContext(precision, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
-		return value.subtract(subtrahend, mc);
-	}
-
-	public static BigDecimal addPrecisely(BigDecimal value, BigDecimal augend, int precision) {
-		return addPrecisely(value, augend, precision, null);
+	public static BigDecimal addPrecisely(BigDecimal addend, BigDecimal augend, int precision) {
+		return addPrecisely(addend, augend, precision, null);
 	}
 
 	/**
 	 * 两数相加保留精度
-	 * @param value
+	 * @param addend
 	 * @param augend 被加数
 	 * @param precision 精度
 	 * @param roundingMode 舍入模式
 	 * @return
 	 */
-	public static BigDecimal addPrecisely(BigDecimal value, BigDecimal augend, int precision, RoundingMode roundingMode) {
-		if (value == null) {
+	public static BigDecimal addPrecisely(BigDecimal addend, BigDecimal augend, int precision, RoundingMode roundingMode) {
+		if (addend == null) {
 			return null;
 		}
 		MathContext mc = new MathContext(precision, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
-		return value.add(augend, mc);
+		return addend.add(augend, mc);
 	}
+
+	public static BigDecimal substract(BigDecimal minuend, BigDecimal subtrahend, int scale) {
+		return substract(minuend, subtrahend, scale, null);
+	}
+
+	public static BigDecimal substract(BigDecimal minuend, BigDecimal subtrahend, int sacle, RoundingMode roundingMode) {
+		if (minuend == null) {
+			return null;
+		}
+
+		BigDecimal result = minuend.subtract(subtrahend);
+		return toScaledBigDecimal(result, sacle, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
+	}
+
+	public static BigDecimal subtractPrecisely(BigDecimal minuend, BigDecimal subtrahend, int precision) {
+		return subtractPrecisely(minuend, subtrahend, precision, null);
+	}
+
+	/**
+	 * 两数相乘保留精度
+	 * @param minuend
+	 * @param subtrahend 被乘数
+	 * @param precision 精度
+	 * @param roundingMode 舍入模式
+	 * @return
+	 */
+	public static BigDecimal subtractPrecisely(BigDecimal minuend, BigDecimal subtrahend, int precision, RoundingMode roundingMode) {
+		if (minuend == null) {
+			return null;
+		}
+		MathContext mc = new MathContext(precision, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
+		return minuend.subtract(subtrahend, mc);
+	}
+
+	public static BigDecimal multiply(BigDecimal multiplier, BigDecimal multiplicand, int scale) {
+		return multiply(multiplier, multiplicand, scale, null);
+	}
+
+	/**
+	 * 两数相乘保留小数位
+	 * @param multiplier 乘数
+	 * @param multiplicand 被乘数
+	 * @param scale 小数位
+	 * @param roundingMode 舍入模式
+	 * @return
+	 */
+	public static BigDecimal multiply(BigDecimal multiplier, BigDecimal multiplicand, int scale, RoundingMode roundingMode) {
+		if (multiplier == null) {
+			return null;
+		}
+
+		BigDecimal decimal = multiplier.multiply(multiplicand);
+		return toScaledBigDecimal(decimal, scale, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
+	}
+
+	public static BigDecimal multiplyPrecisely(BigDecimal multiplier, BigDecimal multiplicand, int precision) {
+		return multiplyPrecisely(multiplier, multiplicand, precision, null);
+	}
+
+	/**
+	 * 两数相乘保留精度
+	 * @param multiplier
+	 * @param multiplicand 乘数
+	 * @param precision 精度
+	 * @param roundingMode 舍入模式
+	 * @return
+	 */
+	public static BigDecimal multiplyPrecisely(BigDecimal multiplier, BigDecimal multiplicand, int precision, RoundingMode roundingMode) {
+		if (multiplier == null) {
+			return null;
+		}
+		MathContext mc = new MathContext(precision, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
+		return multiplier.multiply(multiplicand, mc);
+	}
+
+	/**
+	 * 两数相除保留精度(有效位)，舍入规则默认四舍五入
+	 * @param dividend
+	 * @param divisor
+	 * @param precision
+	 * @return
+	 */
+	public static BigDecimal dividePrecisely(BigDecimal dividend, BigDecimal divisor, int precision) {
+		return dividePrecisely(dividend, divisor, precision, null);
+	}
+
+	/**
+	 * 两数相除保留精度(有效位)
+	 * @param dividend
+	 * @param divisor 除数
+	 * @param precision 精度
+	 * @param roundingMode 舍入模式
+	 * @return
+	 */
+	public static BigDecimal dividePrecisely(BigDecimal dividend, BigDecimal divisor, int precision, RoundingMode roundingMode) {
+		if (dividend == null) {
+			return null;
+		}
+		MathContext mc = new MathContext(precision, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
+		return dividend.divide(divisor, mc);
+	}
+
+	public static BigDecimal divide(BigDecimal dividend, BigDecimal divisor, int scale) {
+		return divide(dividend, divisor, scale, null);
+	}
+
+	/**
+	 * 两数相除保留小数位
+	 * @param dividend
+	 * @param divisor 除数
+	 * @param scale 小数位数
+	 * @param roundingMode 舍入模式
+	 * @return
+	 */
+	public static BigDecimal divide(BigDecimal dividend, BigDecimal divisor, int scale, RoundingMode roundingMode) {
+		if (dividend == null) {
+			return null;
+		}
+
+		return dividend.divide(divisor, scale, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
+	}
+
+
+
 }

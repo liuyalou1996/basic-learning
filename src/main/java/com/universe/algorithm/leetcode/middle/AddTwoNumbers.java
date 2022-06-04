@@ -1,22 +1,7 @@
 package com.universe.algorithm.leetcode.middle;
 
-class Node {
-
-	int value;
-	Node next;
-
-	public Node() {
-	}
-
-	public Node(int value) {
-		this.value = value;
-	}
-
-	public Node(int value, Node next) {
-		this.value = value;
-		this.next = next;
-	}
-}
+import com.universe.algorithm.leetcode.util.LinkedListUtils;
+import com.universe.algorithm.leetcode.util.LinkedListUtils.ListNode;
 
 /**
  * https://leetcode.cn/problems/add-two-numbers/
@@ -36,23 +21,23 @@ class Node {
  */
 public class AddTwoNumbers {
 
-	public Node calculate(Node first, Node second) {
+	public ListNode calculate(ListNode first, ListNode second) {
 		// 这里的头部节点用作临时节点
-		Node headNode = new Node();
-		Node currentNode = headNode;
+		ListNode headListNode = new ListNode();
+		ListNode currentListNode = headListNode;
 
-		int sum = 0, carry = 0, newNodeVal = 0;
+		int sum = 0, carry = 0, newListNodeVal = 0;
 		while (first != null || second != null) {
-			int firstVal = first == null ? 0 : first.value;
-			int secondVal = second == null ? 0 : second.value;
+			int firstVal = first == null ? 0 : first.val;
+			int secondVal = second == null ? 0 : second.val;
 			sum = firstVal + secondVal + carry;
 
 			// carry为进位
 			carry = sum / 10;
-			newNodeVal = sum % 10;
-			currentNode.next = new Node(newNodeVal);
+			newListNodeVal = sum % 10;
+			currentListNode.next = new ListNode(newListNodeVal);
 
-			currentNode = currentNode.next;
+			currentListNode = currentListNode.next;
 			if (first != null) {
 				first = first.next;
 			}
@@ -62,42 +47,18 @@ public class AddTwoNumbers {
 		}
 
 		if (carry == 1) {
-			currentNode.next = new Node(1);
+			currentListNode.next = new ListNode(1);
 		}
 
-		return headNode.next;
-	}
-
-	public static Node transferFromArray(int[] array) {
-		Node head = new Node();
-
-		Node current = head;
-		for (int element : array) {
-			current.next = new Node(element);
-			current = current.next;
-		}
-
-		return head.next;
-	}
-
-	public static void forEach(Node headNode) {
-		Node current = headNode;
-		while (current != null) {
-			if (current.next != null) {
-				System.out.print(current.value + " -> ");
-			} else {
-				System.out.print(current.value);
-			}
-			current = current.next;
-		}
+		return headListNode.next;
 	}
 
 	public static void main(String[] args) {
-		Node first = transferFromArray(new int[] { 2, 4, 3 });
-		Node second = transferFromArray(new int[] { 5, 6, 4 });
+		ListNode first = LinkedListUtils.fromArray(new int[] { 2, 4, 3 });
+		ListNode second = LinkedListUtils.fromArray(new int[] { 5, 6, 4 });
 
 		AddTwoNumbers addTwoNumbers = new AddTwoNumbers();
-		Node newNode = addTwoNumbers.calculate(first, second);
-		forEach(newNode);
+		ListNode newListNode = addTwoNumbers.calculate(first, second);
+		LinkedListUtils.forEach(newListNode);
 	}
 }

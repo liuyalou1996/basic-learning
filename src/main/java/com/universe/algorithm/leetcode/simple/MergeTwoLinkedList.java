@@ -37,12 +37,13 @@ public class MergeTwoLinkedList {
 			current = current.next;
 		}
 
+		current.next = first == null ? second : first;
 		return head.next;
 	}
 
 	public static void main(String[] args) {
-		ListNode first = LinkedListUtils.fromArray(new int[] { 1, 3, 5 });
-		ListNode second = LinkedListUtils.fromArray(new int[] { 2, 4, 6 });
+		ListNode first = LinkedListUtils.fromArray(new int[] { 1, 2, 3 });
+		ListNode second = LinkedListUtils.fromArray(new int[] { 4, 5, 6 });
 
 		MergeTwoLinkedList mergeTwoLinkedList = new MergeTwoLinkedList();
 		ListNode result = mergeTwoLinkedList.merge(first, second);

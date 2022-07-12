@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 支持AES、DES、RSA加密、数字签名以及生成对称密钥和非对称密钥对
  */
-public class EncryptUtils {
+public class CryptoUtils {
 
 	private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 	private static final Encoder BASE64_ENCODER = Base64.getEncoder();
@@ -305,7 +305,7 @@ public class EncryptUtils {
 		Cipher cipher = CIPHER_CACHE.get(algorithm);
 		// double check，减少上下文切换
 		if (cipher == null) {
-			synchronized (EncryptUtils.class) {
+			synchronized (CryptoUtils.class) {
 				if ((cipher = CIPHER_CACHE.get(algorithm)) == null) {
 					cipher = determineWhichCipherToUse(algorithm);
 					CIPHER_CACHE.put(algorithm, cipher);
@@ -315,7 +315,7 @@ public class EncryptUtils {
 			}
 		}
 
-		synchronized (EncryptUtils.class) {
+		synchronized (CryptoUtils.class) {
 			cipher.init(mode, key, iv);
 			return cipher.doFinal(msg);
 		}

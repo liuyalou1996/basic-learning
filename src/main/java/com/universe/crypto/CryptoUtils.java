@@ -1,8 +1,9 @@
 package com.universe.crypto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -71,8 +72,8 @@ public class CryptoUtils {
 		return new AsymmetricKeyPair(publicKey, privateKey);
 	}
 
-	public static String encryptByRSA(String publicKeyText, String cleartext) throws Exception {
-		return encryptAsymmetrically(publicKeyText, cleartext, Algorithm.RSA_ECB_PKCS1);
+	public static String encryptByRSA(String publicKeyText, String plainText) throws Exception {
+		return encryptAsymmetrically(publicKeyText, plainText, Algorithm.RSA_ECB_PKCS1);
 	}
 
 	public static String decryptByRSA(String privateKeyText, String ciphertext) throws Exception {
@@ -152,16 +153,16 @@ public class CryptoUtils {
 	 * 对称加密
 	 * @param secretKey 密钥
 	 * @param iv 加密向量，只有CBC模式才支持
-	 * @param cleartext 明文
+	 * @param plainText 明文
 	 * @param algorithm 对称加密算法，如AES、DES
 	 * @return
 	 * @throws Exception
 	 */
-	public static String encryptSymmetrically(String secretKey, String iv, String cleartext, Algorithm algorithm) throws Exception {
+	public static String encryptSymmetrically(String secretKey, String iv, String plainText, Algorithm algorithm) throws Exception {
 		SecretKey key = decodeSymmetricKey(secretKey, algorithm);
 		IvParameterSpec ivParameterSpec = StringUtils.isBlank(iv) ? null : decodeIv(iv);
-		byte[] cleartextInBytes = cleartext.getBytes(DEFAULT_CHARSET);
-		byte[] ciphertextInBytes = transform(algorithm, Cipher.ENCRYPT_MODE, key, ivParameterSpec, cleartextInBytes);
+		byte[] plainTextInBytes = plainText.getBytes(DEFAULT_CHARSET);
+		byte[] ciphertextInBytes = transform(algorithm, Cipher.ENCRYPT_MODE, key, ivParameterSpec, plainTextInBytes);
 
 		return BASE64_ENCODER.encodeToString(ciphertextInBytes);
 	}
@@ -179,22 +180,22 @@ public class CryptoUtils {
 		SecretKey key = decodeSymmetricKey(secretKey, algorithm);
 		IvParameterSpec ivParameterSpec = StringUtils.isBlank(iv) ? null : decodeIv(iv);
 		byte[] ciphertextInBytes = BASE64_DECODER.decode(ciphertext);
-		byte[] cleartextInBytes = transform(algorithm, Cipher.DECRYPT_MODE, key, ivParameterSpec, ciphertextInBytes);
-		return new String(cleartextInBytes, DEFAULT_CHARSET);
+		byte[] plainTextInBytes = transform(algorithm, Cipher.DECRYPT_MODE, key, ivParameterSpec, ciphertextInBytes);
+		return new String(plainTextInBytes, DEFAULT_CHARSET);
 	}
 
 	/**
 	 * 非对称加密
 	 * @param publicKeyText 公钥
-	 * @param cleartext 明文
+	 * @param plainText 明文
 	 * @param algorithm 非对称加密算法
 	 * @return
 	 * @throws Exception
 	 */
-	public static String encryptAsymmetrically(String publicKeyText, String cleartext, Algorithm algorithm) throws Exception {
+	public static String encryptAsymmetrically(String publicKeyText, String plainText, Algorithm algorithm) throws Exception {
 		PublicKey publicKey = regeneratePublicKey(publicKeyText, algorithm);
-		byte[] cleartextInBytes = cleartext.getBytes(DEFAULT_CHARSET);
-		byte[] ciphertextInBytes = transform(algorithm, Cipher.ENCRYPT_MODE, publicKey, cleartextInBytes);
+		byte[] plainTextInBytes = plainText.getBytes(DEFAULT_CHARSET);
+		byte[] ciphertextInBytes = transform(algorithm, Cipher.ENCRYPT_MODE, publicKey, plainTextInBytes);
 		return BASE64_ENCODER.encodeToString(ciphertextInBytes);
 	}
 
@@ -209,8 +210,8 @@ public class CryptoUtils {
 	public static String decryptAsymmetrically(String privateKeyText, String ciphertext, Algorithm algorithm) throws Exception {
 		PrivateKey privateKey = regeneratePrivateKey(privateKeyText, algorithm);
 		byte[] ciphertextInBytes = BASE64_DECODER.decode(ciphertext);
-		byte[] cleartextInBytes = transform(algorithm, Cipher.DECRYPT_MODE, privateKey, ciphertextInBytes);
-		return new String(cleartextInBytes, DEFAULT_CHARSET);
+		byte[] plainTextInBytes = transform(algorithm, Cipher.DECRYPT_MODE, privateKey, ciphertextInBytes);
+		return new String(plainTextInBytes, DEFAULT_CHARSET);
 	}
 
 	/**
@@ -322,7 +323,7 @@ public class CryptoUtils {
 	}
 
 	private static Cipher determineWhichCipherToUse(Algorithm algorithm) throws NoSuchAlgorithmException, NoSuchPaddingException {
-		Cipher cipher = null;
+		Cipher cipher;
 		String transformation = algorithm.getTransformation();
 		// 官方推荐的transformation使用algorithm/mode/padding组合，SunJCE使用ECB作为默认模式，使用PKCS5Padding作为默认填充
 		if (StringUtils.isNotEmpty(transformation)) {
@@ -338,6 +339,9 @@ public class CryptoUtils {
 	 * 算法分为加密算法和签名算法，更多算法实现见：<br/>
 	 * <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#impl">jdk8中的标准算法</a>
 	 */
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class Algorithm {
 
 		/**
@@ -365,53 +369,15 @@ public class CryptoUtils {
 			this(name, null, keySize);
 		}
 
-		public Algorithm(String name, String transformation, int keySize) {
-			this.name = name;
-			this.transformation = transformation;
-			this.keySize = keySize;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getTransformation() {
-			return transformation;
-		}
-
-		public int getKeySize() {
-			return keySize;
-		}
-
-		@Override
-		public String toString() {
-			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-		}
-
 	}
 
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class AsymmetricKeyPair {
 
 		private String publicKey;
 		private String privateKey;
-
-		public AsymmetricKeyPair(String publicKey, String privateKey) {
-			this.publicKey = publicKey;
-			this.privateKey = privateKey;
-		}
-
-		public String getPublicKey() {
-			return publicKey;
-		}
-
-		public String getPrivateKey() {
-			return privateKey;
-		}
-
-		@Override
-		public String toString() {
-			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-		}
 	}
 
 }

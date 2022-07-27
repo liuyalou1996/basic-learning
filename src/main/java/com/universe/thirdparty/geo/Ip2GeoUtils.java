@@ -40,7 +40,7 @@ public class Ip2GeoUtils {
 	/**
 	 * Geo2Ip数据库名，适用于海外国家IP归属
 	 */
-	private static final String GEO2IP_DB = "dbip-city-lite.mmdb";
+	private static final String GEO2IP_DB = "GeoLite2-City.mmdb";
 	/**
 	 * Ip2Region数据库名，适用于国内IP归属
 	 */

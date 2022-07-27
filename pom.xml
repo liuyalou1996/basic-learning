@@ -17,12 +17,12 @@
         <java.version>1.8</java.version>
     </properties>
 
-    <!--<repositories>
+    <repositories>
         <repository>
             <id>com.e-iceblue</id>
             <url>https://repo.e-iceblue.cn/repository/maven-public/</url>
         </repository>
-    </repositories>-->
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -198,6 +198,19 @@
             <artifactId>spire.presentation.free</artifactId>
             <version>3.9.0</version>
         </dependency>
+
+        <!--地理位置定位-->
+        <dependency>
+            <groupId>com.maxmind.geoip2</groupId>
+            <artifactId>geoip2</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>2.6.5</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.projectlombok</groupId>

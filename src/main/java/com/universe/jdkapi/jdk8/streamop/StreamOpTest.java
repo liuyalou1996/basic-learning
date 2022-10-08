@@ -2,7 +2,7 @@ package com.universe.jdkapi.jdk8.streamop;
 
 import com.universe.jdkapi.jdk8.streamop.entity.Hobby;
 import com.universe.jdkapi.jdk8.streamop.entity.Student;
-import com.universe.thirdparty.fastjson.JsonUtils;
+import com.universe.thirdparty.fastjson.FastJsonUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -96,7 +96,7 @@ public class StreamOpTest {
 	public static void useGroupingBy() {
 		Map<String, List<Student>> map = students.stream()
 			.collect(Collectors.groupingBy(Student::getName, LinkedHashMap::new, Collectors.toList()));
-		System.out.println(JsonUtils.toPrettyJsonString(map));
+		System.out.println(FastJsonUtils.toPrettyJsonString(map));
 	}
 
 	/**

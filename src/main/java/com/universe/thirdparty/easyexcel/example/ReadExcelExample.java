@@ -9,7 +9,7 @@ import com.universe.thirdparty.easyexcel.example.entity.BankBranch;
 import com.universe.thirdparty.easyexcel.example.entity.Staff;
 import com.universe.thirdparty.easyexcel.example.listener.ReadExcelListener;
 import com.universe.thirdparty.easyexcel.example.listener.ReadMergedCellExcelListener;
-import com.universe.thirdparty.fastjson.JsonUtils;
+import com.universe.thirdparty.fastjson.FastJsonUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -59,7 +59,7 @@ public class ReadExcelExample {
 				}
 			}
 		});
-		System.out.println(JsonUtils.toPrettyJsonStringWithNullValue(resultList));
+		System.out.println(FastJsonUtils.toNullablePrettyJsonString(resultList));
 	}
 
 	public static void main(String[] args) {

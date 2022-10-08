@@ -16,46 +16,67 @@ import java.util.Objects;
  * @author: liuyalou
  * @date: 2019年10月29日
  */
-public class JsonUtils {
+public class FastJsonUtils {
 
   public static String toJsonString(Object obj) {
     return toJsonString(obj, null, false, false);
   }
 
+  /**
+   * 转化为json字符串
+   * @param obj 目标对象
+   * @param filters 序列化过滤器
+   * @return json字符串
+   */
   public static String toJsonString(Object obj, SerializeFilter... filters) {
     return toJsonString(obj, null, false, false, filters);
   }
 
-  public static String toJsonStringWithNullValue(Object obj, SerializeFilter... filters) {
+  /**
+   * 转化为带空值的json字符串
+   * @param obj 目标对象
+   * @param filters 序列化过滤器
+   * @return json字符串
+   */
+  public static String toNullableJsonString(Object obj, SerializeFilter... filters) {
     return toJsonString(obj, null, true, false, filters);
   }
 
+  /**
+   * 转化为已格式化的json字符串
+   * @param obj 目标对象
+   * @param filters 序列化过滤器
+   * @return json字符串
+   */
   public static String toPrettyJsonString(Object obj, SerializeFilter... filters) {
     return toJsonString(obj, null, false, true, filters);
   }
 
-  public static String toPrettyJsonStringWithNullValue(Object obj, SerializeFilter... filters) {
+  /**
+   * 转化为带空值已格式化的Json字符串
+   * @param obj 目标对象
+   * @param filters 序列化过滤器
+   * @return json字符串
+   */
+  public static String toNullablePrettyJsonString(Object obj, SerializeFilter... filters) {
     return toJsonString(obj, null, true, true, filters);
   }
 
-  public static String toJsonStringWithDateFormat(Object obj, String dateFormat, SerializeFilter... filters) {
+  public static String toDateFormattedJsonString(Object obj, String dateFormat, SerializeFilter... filters) {
     return toJsonString(obj, dateFormat, false, false, filters);
   }
 
-  public static String toJsonStringWithDateFormatAndNullValue(Object obj, String dateFormat, SerializeFilter... filters) {
+  public static String toNullableAndDateFormattedJsonString(Object obj, String dateFormat, SerializeFilter... filters) {
     return toJsonString(obj, dateFormat, true, false, filters);
   }
 
-  public static String toPrettyJsonStringWithDateFormat(Object obj, String dateFormat, SerializeFilter... filters) {
+  public static String toDateFormattedPrettyJsonString(Object obj, String dateFormat, SerializeFilter... filters) {
     return toJsonString(obj, dateFormat, false, true, filters);
   }
 
-  public static String toPrettyJsonStringWithDateFormatAndNullValue(Object obj, String dateFormat, SerializeFilter... filters) {
+  public static String toNullableAndDateFormattedPrettyJsonString(Object obj, String dateFormat, SerializeFilter... filters) {
     return toJsonString(obj, dateFormat, true, true, filters);
   }
-
-
-
 
   public static String toJsonString(Object obj, String dateFormat, boolean writeNullValue, boolean prettyFormat,
       SerializeFilter... filters) {
@@ -78,7 +99,14 @@ public class JsonUtils {
 
   }
 
-  public static <T> T toJavaBean(String jsonStr, Class<T> clazz) {
+  /**
+   * json字符串转bean
+   * @param jsonStr json字符串
+   * @param clazz 运行时对象
+   * @return bean
+   * @param <T>
+   */
+  public static <T> T toBean(String jsonStr, Class<T> clazz) {
     if (StringUtils.isBlank(jsonStr)) {
       return null;
     }
@@ -86,6 +114,13 @@ public class JsonUtils {
     return JSON.parseObject(jsonStr, clazz);
   }
 
+  /**
+   * json字符串转List
+   * @param jsonStr json字符串
+   * @param clazz 运行时对象
+   * @return List对象
+   * @param <T>
+   */
   public static <T> List<T> toList(String jsonStr, Class<T> clazz) {
     if (StringUtils.isBlank(jsonStr)) {
       return null;
@@ -94,6 +129,11 @@ public class JsonUtils {
     return JSON.parseArray(jsonStr, clazz);
   }
 
+  /**
+   * json字符串转Map
+   * @param jsonStr json字符串
+   * @return Map对象
+   */
   public static Map<String, Object> toMap(String jsonStr) {
     if (StringUtils.isBlank(jsonStr)) {
       return null;
@@ -102,7 +142,12 @@ public class JsonUtils {
     return JSON.parseObject(jsonStr, new TypeReference<Map<String, Object>>() {});
   }
 
-  public static Map<String, Object> javaBeanToMap(Object obj) {
+  /**
+   * bean转Map
+   * @param obj
+   * @return
+   */
+  public static Map<String, Object> beanToMap(Object obj) {
     if (Objects.isNull(obj)) {
       return null;
     }
@@ -110,7 +155,14 @@ public class JsonUtils {
     return toMap(toJsonString(obj));
   }
 
-  public static <T> T mapToJavaBean(Map<String, ? extends Object> map, Class<T> clazz) {
+  /**
+   * map转bean
+   * @param map
+   * @param clazz
+   * @return
+   * @param <T>
+   */
+  public static <T> T mapToBean(Map<String, ? extends Object> map, Class<T> clazz) {
     if (CollectionUtils.isEmpty(map)) {
       return null;
     }

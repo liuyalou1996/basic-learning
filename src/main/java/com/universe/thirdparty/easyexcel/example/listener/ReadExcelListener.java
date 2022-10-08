@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.universe.thirdparty.easyexcel.example.entity.Staff;
-import com.universe.thirdparty.fastjson.JsonUtils;
+import com.universe.thirdparty.fastjson.FastJsonUtils;
 
 public class ReadExcelListener extends AnalysisEventListener<Staff> {
 
@@ -22,12 +22,12 @@ public class ReadExcelListener extends AnalysisEventListener<Staff> {
 
   @Override
   public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
-    System.out.println("头部信息为：" + JsonUtils.toJsonString(headMap));
+    System.out.println("头部信息为：" + FastJsonUtils.toJsonString(headMap));
   }
 
   @Override
   public void invoke(Staff data, AnalysisContext context) {
-    System.out.println("读到了一条数据:" + JsonUtils.toJsonString(data));
+    System.out.println("读到了一条数据:" + FastJsonUtils.toJsonString(data));
     staffList.add(data);
   }
 

@@ -4,7 +4,7 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.enums.CellExtraTypeEnum;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.metadata.CellExtra;
-import com.universe.thirdparty.fastjson.JsonUtils;
+import com.universe.thirdparty.fastjson.FastJsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,18 +22,18 @@ public class ReadMergedCellExcelListener<T> extends AnalysisEventListener<T> {
 
 	@Override
 	public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
-		System.out.println("头部信息为：" + JsonUtils.toJsonString(headMap));
+		System.out.println("头部信息为：" + FastJsonUtils.toJsonString(headMap));
 	}
 
 	@Override
 	public void invoke(T data, AnalysisContext context) {
-		System.out.println("读到了一条数据:" + JsonUtils.toJsonString(data));
+		System.out.println("读到了一条数据:" + FastJsonUtils.toJsonString(data));
 		resultList.add(data);
 	}
 
 	@Override
 	public void extra(CellExtra extra, AnalysisContext context) {
-		System.out.println("读取到了一条额外信息" + JsonUtils.toJsonString(extra));
+		System.out.println("读取到了一条额外信息" + FastJsonUtils.toJsonString(extra));
 		if (CellExtraTypeEnum.MERGE == extra.getType()) {
 			System.out.println("额外信息是合并单元格，内容为：" + extra.getText());
 		}

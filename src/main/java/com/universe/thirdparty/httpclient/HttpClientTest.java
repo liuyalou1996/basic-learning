@@ -24,7 +24,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.universe.thirdparty.fastjson.JsonUtils;
+import com.universe.thirdparty.fastjson.FastJsonUtils;
 
 public class HttpClientTest {
 
@@ -72,7 +72,7 @@ public class HttpClientTest {
     params.put("mid", "2");
     params.put("mname", "liuqian");
     params.put("mno", "1234567");
-    StringEntity entity = new StringEntity(JsonUtils.toJsonString(params), ContentType.APPLICATION_JSON);
+    StringEntity entity = new StringEntity(FastJsonUtils.toJsonString(params), ContentType.APPLICATION_JSON);
     httpPost.setEntity(entity);
     try (CloseableHttpResponse response = (CloseableHttpResponse) httpClient.execute(httpPost)) {
       int statusCode = response.getStatusLine().getStatusCode();

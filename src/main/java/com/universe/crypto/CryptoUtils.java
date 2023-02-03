@@ -11,6 +11,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -58,7 +59,7 @@ public class CryptoUtils {
 	}
 
 	/**
-	 * 生成非对称密钥对，目前支持的算法有RSA、DSA
+	 * 生成非对称密钥对，目前支持的算法有RSA、DSA。备注：默认生成的密钥格式为PKCS8
 	 * @param algorithm
 	 * @return
 	 * @throws NoSuchAlgorithmException
@@ -152,7 +153,7 @@ public class CryptoUtils {
 	/**
 	 * 对称加密
 	 * @param secretKey 密钥
-	 * @param iv 加密向量，只有CBC模式才支持
+	 * @param iv 加密向量，只有CBC模式才支持，如果是CBC则必传
 	 * @param plainText 明文
 	 * @param algorithm 对称加密算法，如AES、DES
 	 * @return
@@ -170,7 +171,7 @@ public class CryptoUtils {
 	/**
 	 * 对称解密
 	 * @param secretKey 密钥
-	 * @param iv 加密向量，只有CBC模式才支持
+	 * @param iv 加密向量，只有CBC模式才支持，如果是CBC则必传
 	 * @param ciphertext 密文
 	 * @param algorithm 对称加密算法，如AES、DES
 	 * @return
@@ -378,6 +379,14 @@ public class CryptoUtils {
 
 		private String publicKey;
 		private String privateKey;
+	}
+
+	public static void main(String[] args) throws Exception {
+		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDWoMthYPw/1dxeoWzecQzM+wUcekrajGgsqBcSldxx72DR/9tvFBI4/KtwCedHsuUlTSe8ztrOsOBRiaaCCL5yyvt6cWgX1146dx0L4YWNLg4ald6TmlUjWrNGukb6DTCY4CiPFfu0R8qvOFy33B777pYuUv/U1v5rmZvxpwn65wIDAQAB";
+		String privateKey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBANagy2Fg/D/V3F6hbN5xDMz7BRx6StqMaCyoFxKV3HHvYNH/228UEjj8q3AJ50ey5SVNJ7zO2s6w4FGJpoIIvnLK+3pxaBfXXjp3HQvhhY0uDhqV3pOaVSNas0a6RvoNMJjgKI8V+7RHyq84XLfcHvvuli5S/9TW/muZm/GnCfrnAgMBAAECgYEAo4/2bkeS9LLuNc+fQAW3U58YzhMEaHkICsAulSNP1CQxDNiHSadqG7Oykrd5YdKbfknGNsUNSubQjFLyabZwK3VW9ymtwKPZ8m63yoao28I9B8gDdQeF/+xxV+D4khUaYA1yeqJWFEifmF9VGUOYBxmywxS6BHPHnQ4e9V2iXwECQQD4XCgWxhI3xzWbVxdFygg19Rgvv2qgIyzCY0Vjckp9KMFAatb6NA3HOz0NmVifdN9yLkdLE5baVGZKLWItnb/xAkEA3Tr/hM2Eck5dgohws0CnO/VdZ/3L4OuElgJ7XGfCJnViOZUU9lZ7KmMSi/XOZoZhnPR8vwd2yp229aY6hwnAVwJBAME5kccGGy5iQoa031pgsLqqEUM0vZQRScWCzn1sch+mEZQ4i0DmNsIGiJ2H7LdCioWfE8CJYRhECcE0ReoPjUECQBKISLNlS/0PV4IBz/8UIW5CZaq6dgPHdvniB1d8UaVLHAla1cC1CehJGFqlIr8v7qlpSbHu/CKJB7SYUjrRtE0CQHzehXqt1RYQjQbS10JsasF1ZCr3FUjMrrILwCEbpXIc1kFP7i7Y7HrYqpKILOqMqcmrbIfgaXEei+pJ1c4FM2c=";
+		String signature = signBySHA256WithRSA(privateKey, "test");
+		System.out.println(signature);
+		System.out.println(verifyBySHA256WithRSA(publicKey, "test", signature));
 	}
 
 }

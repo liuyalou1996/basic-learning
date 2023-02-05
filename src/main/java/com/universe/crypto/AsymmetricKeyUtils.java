@@ -55,7 +55,7 @@ public class AsymmetricKeyUtils {
 	 * 格式化密钥为标准Pem格式
 	 * @param keyFormat 密钥格式，参考{@link KeyFormat}
 	 * @param asymmetricKey 非对称密钥
-	 * @return
+	 * @return .pem格式密钥字符串
 	 * @throws IOException
 	 */
 	public static String formatKeyAsPemString(KeyFormat keyFormat, String asymmetricKey) throws IOException {
@@ -72,7 +72,7 @@ public class AsymmetricKeyUtils {
 	/**
 	 * 从标准Pem格式中提取密钥
 	 * @param asymmetricKeyAsPem
-	 * @return
+	 * @return 无---BEGIN---和---END---密钥字符串
 	 * @throws IOException
 	 */
 	public static String extractKeyFromPemString(String asymmetricKeyAsPem) throws IOException {
@@ -121,6 +121,12 @@ public class AsymmetricKeyUtils {
 		return BASE64_ENCODER.encodeToString(privateKey.getEncoded());
 	}
 
+	/**
+	 * 将PKCS1私钥转换为PKCS8私钥
+	 * @param privateKeyInPKCS8 PKCS8私钥
+	 * @return PKCS1私钥
+	 * @throws Exception
+	 */
 	public static String transformPrivateKeyFromPkcs8ToPkcs1(String privateKeyInPKCS8) throws Exception {
 		PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(BASE64_DECODER.decode(privateKeyInPKCS8));
 		RSAPrivateKey rsaPrivateKey = RSAPrivateKey.getInstance(privateKeyInfo.parsePrivateKey());

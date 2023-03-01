@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Running Headers and Footers</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 40mm 10mm 50mm 10mm;
+
+            @top-left {
+                content: element(headerLeft);
+            }
+
+            @bottom-center {
+                content: element(footerCenter);
+            }
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            font-family: Calibri, serif;
+        }
+
+        .headerLeft {
+            position: running(headerLeft);
+        }
+
+        .titleWrapper > div {
+            margin: 2px 0;
+        }
+
+        .footerCenter {
+            text-align: center;
+            position: running(footerCenter);
+        }
+
+        .footerTipsWrapper {
+            color: #C1A97D;
+            margin-top: 10px;
+            border-top: 2px solid #EFE7DA;
+        }
+
+        .footerTipsWrapper > div {
+            font-size: 12px;
+            margin-top: 12px;
+        }
+
+        .contentWrapper {
+            margin-top: -10px;
+        }
+
+        .paddingWrapper {
+            padding: 10px;
+        }
+
+        .accountIntroduction {
+            margin-top: 60px;
+            background-color: #EFE7DA;
+            border: 1px solid #EFE7DA;
+            border-radius: 10px;
+        }
+
+        .accountDetailsWrapper {
+            margin-top: 50px;
+            border: 3px solid #EFE7DA;
+            border-radius: 10px;
+        }
+
+        .subTitle {
+            font-weight: bold;
+            border-bottom: 2px solid #EFE7DA;
+            padding-bottom: 10px;
+        }
+
+        .accountDetails > div {
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="headerLeft paddingWrapper">
+        <img src="http://localhost:8443/images/proof/head_logo.png" />
+    </div>
+    <div class="footerCenter">
+        <div class="footerLogoWrapper"><img src="http://localhost:8443/images/proof/footer_logo.png" alt="logo" /></div>
+        <div class="footerTipsWrapper">
+            <div>www.aletaplanet.com | account@aletaplanet.com</div>
+            <div>MPHK Management Company Limited | Suite 615, 6/F, Ocean Centre, Harbour City, Tsim Sha Tsui, Tsim Sha Tsui, Kowloon |<br/>
+                License No.: 21-10-03068
+            </div>
+        </div>
+    </div>
+
+    <div class="contentWrapper">
+        <div class="titleWrapper paddingWrapper">
+            <div><b>Proof of Account Details</b></div>
+            <div>Generated on: 11 Jan 2023</div>
+        </div>
+        <div class="tips paddingWrapper">To whom it may concern,</div>
+        <div class="accountIntroduction paddingWrapper">
+            <div><b>Personal account of ${memberFullName}</b></div>
+            <div style="margin-top: 10px;word-break: break-word">
+                This letter confirms the below account details allow ${memberFullName} residing at ${memberAddress} to receive payments into his/ her AP-1 Account:
+            </div>
+        </div>
+        <div class="accountDetailsWrapper paddingWrapper">
+            <div class="subTitle">Business account details</div>
+            <div class="accountDetails">
+                <div>Account Name: ${memberFullName}</div>
+                <div>Account Number: ${vaNo}</div>
+                <div>Bank Name: DBS Bank (Hong Kong) Limited</div>
+                <div>Bank SWIFT/BIC: DHBKHKHH</div>
+                <div>Bank Country: 016</div>
+                <div>Bank Address: 478</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

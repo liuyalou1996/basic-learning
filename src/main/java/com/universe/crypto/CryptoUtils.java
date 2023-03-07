@@ -1,7 +1,10 @@
 package com.universe.crypto;
 
+import com.universe.crypto.CryptoUtils.Algorithm.Encryption;
+import com.universe.crypto.CryptoUtils.Algorithm.Signing;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,7 +14,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -74,11 +76,11 @@ public class CryptoUtils {
 	}
 
 	public static String encryptByRSA(String publicKeyText, String plainText) throws Exception {
-		return encryptAsymmetrically(publicKeyText, plainText, Algorithm.RSA_ECB_PKCS1);
+		return encryptAsymmetrically(publicKeyText, plainText, Encryption.RSA_ECB_PKCS1);
 	}
 
 	public static String decryptByRSA(String privateKeyText, String ciphertext) throws Exception {
-		return decryptAsymmetrically(privateKeyText, ciphertext, Algorithm.RSA_ECB_PKCS1);
+		return decryptAsymmetrically(privateKeyText, ciphertext, Encryption.RSA_ECB_PKCS1);
 	}
 
 	/**
@@ -89,7 +91,7 @@ public class CryptoUtils {
 	 * @throws Exception
 	 */
 	public static String signBySHA1WithDSA(String privateKeyText, String msg) throws Exception {
-		return doSign(privateKeyText, msg, Algorithm.DSA, Algorithm.SHA1WithDSA);
+		return doSign(privateKeyText, msg, Encryption.DSA, Signing.SHA1WithDSA);
 	}
 
 	/**
@@ -100,7 +102,7 @@ public class CryptoUtils {
 	 * @throws Exception
 	 */
 	public static String signBySHA1WithRSA(String privateKeyText, String msg) throws Exception {
-		return doSign(privateKeyText, msg, Algorithm.RSA_ECB_PKCS1, Algorithm.SHA1WithRSA);
+		return doSign(privateKeyText, msg, Encryption.RSA_ECB_PKCS1, Signing.SHA1WithRSA);
 	}
 
 	/**
@@ -111,7 +113,7 @@ public class CryptoUtils {
 	 * @throws Exception
 	 */
 	public static String signBySHA256WithRSA(String privateKeyText, String msg) throws Exception {
-		return doSign(privateKeyText, msg, Algorithm.RSA_ECB_PKCS1, Algorithm.SHA256WithRSA);
+		return doSign(privateKeyText, msg, Encryption.RSA_ECB_PKCS1, Signing.SHA256WithRSA);
 	}
 
 	/**
@@ -123,7 +125,7 @@ public class CryptoUtils {
 	 * @throws Exception
 	 */
 	public static boolean verifyBySHA1WithDSA(String publicKeyText, String msg, String signatureText) throws Exception {
-		return doVerify(publicKeyText, msg, signatureText, Algorithm.DSA, Algorithm.SHA1WithDSA);
+		return doVerify(publicKeyText, msg, signatureText, Encryption.DSA, Signing.SHA1WithDSA);
 	}
 
 	/**
@@ -135,7 +137,7 @@ public class CryptoUtils {
 	 * @throws Exception
 	 */
 	public static boolean verifyBySHA1WithRSA(String publicKeyText, String msg, String signatureText) throws Exception {
-		return doVerify(publicKeyText, msg, signatureText, Algorithm.RSA_ECB_PKCS1, Algorithm.SHA1WithRSA);
+		return doVerify(publicKeyText, msg, signatureText, Encryption.RSA_ECB_PKCS1, Signing.SHA1WithRSA);
 	}
 
 	/**
@@ -147,7 +149,7 @@ public class CryptoUtils {
 	 * @throws Exception
 	 */
 	public static boolean verifyBySHA256WithRSA(String publicKeyText, String msg, String signatureText) throws Exception {
-		return doVerify(publicKeyText, msg, signatureText, Algorithm.RSA_ECB_PKCS1, Algorithm.SHA256WithRSA);
+		return doVerify(publicKeyText, msg, signatureText, Encryption.RSA_ECB_PKCS1, Signing.SHA256WithRSA);
 	}
 
 	/**
@@ -340,34 +342,38 @@ public class CryptoUtils {
 	 * 算法分为加密算法和签名算法，更多算法实现见：<br/>
 	 * <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#impl">jdk8中的标准算法</a>
 	 */
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
 	public static class Algorithm {
 
-		/**
-		 * 以下为加密算法，加密算法transformation采用algorithm/mode/padding的形式
-		 */
-		public static final Algorithm AES_ECB_PKCS5 = new Algorithm("AES", "AES/ECB/PKCS5Padding", 128);
-		public static final Algorithm AES_CBC_PKCS5 = new Algorithm("AES", "AES/CBC/PKCS5Padding", 128);
-		public static final Algorithm DES_ECB_PKCS5 = new Algorithm("DES", "DES/ECB/PKCS5Padding", 56);
-		public static final Algorithm DES_CBC_PKCS5 = new Algorithm("DES", "DES/CBC/PKCS5Padding", 56);
-		public static final Algorithm RSA_ECB_PKCS1 = new Algorithm("RSA", "RSA/ECB/PKCS1Padding", 1024);
+		public interface Encryption {
+			Algorithm AES_ECB_PKCS5 = new Algorithm("AES", "AES/ECB/PKCS5Padding", 128);
+			Algorithm AES_CBC_PKCS5 = new Algorithm("AES", "AES/CBC/PKCS5Padding", 128);
+			Algorithm DES_ECB_PKCS5 = new Algorithm("DES", "DES/ECB/PKCS5Padding", 56);
+			Algorithm DES_CBC_PKCS5 = new Algorithm("DES", "DES/CBC/PKCS5Padding", 56);
+			Algorithm RSA_ECB_PKCS1 = new Algorithm("RSA", "RSA/ECB/PKCS1Padding", 1024);
+			Algorithm DSA = new Algorithm("DSA", 1024);
+		}
 
-		/**
-		 * 以下为签名算法
-		 */
-		public static final Algorithm DSA = new Algorithm("DSA", 1024);
-		public static final Algorithm SHA1WithDSA = new Algorithm("SHA256WithRSA", 1024);
-		public static final Algorithm SHA1WithRSA = new Algorithm("SHA1WithRSA", 2048);
-		public static final Algorithm SHA256WithRSA = new Algorithm("SHA256WithRSA", 2048);
+		public interface Signing {
+			Algorithm SHA1WithDSA = new Algorithm("SHA1withDSA", 1024);
+			Algorithm SHA1WithRSA = new Algorithm("SHA1WithRSA", 2048);
+			Algorithm SHA256WithRSA = new Algorithm("SHA256WithRSA", 2048);
+		}
 
+		@Getter
 		private String name;
+		@Getter
 		private String transformation;
+		@Getter
 		private int keySize;
 
 		public Algorithm(String name, int keySize) {
 			this(name, null, keySize);
+		}
+
+		public Algorithm(String name, String transformation, int keySize) {
+			this.name = name;
+			this.transformation = transformation;
+			this.keySize = keySize;
 		}
 
 	}
@@ -379,14 +385,6 @@ public class CryptoUtils {
 
 		private String publicKey;
 		private String privateKey;
-	}
-
-	public static void main(String[] args) throws Exception {
-		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDWoMthYPw/1dxeoWzecQzM+wUcekrajGgsqBcSldxx72DR/9tvFBI4/KtwCedHsuUlTSe8ztrOsOBRiaaCCL5yyvt6cWgX1146dx0L4YWNLg4ald6TmlUjWrNGukb6DTCY4CiPFfu0R8qvOFy33B777pYuUv/U1v5rmZvxpwn65wIDAQAB";
-		String privateKey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBANagy2Fg/D/V3F6hbN5xDMz7BRx6StqMaCyoFxKV3HHvYNH/228UEjj8q3AJ50ey5SVNJ7zO2s6w4FGJpoIIvnLK+3pxaBfXXjp3HQvhhY0uDhqV3pOaVSNas0a6RvoNMJjgKI8V+7RHyq84XLfcHvvuli5S/9TW/muZm/GnCfrnAgMBAAECgYEAo4/2bkeS9LLuNc+fQAW3U58YzhMEaHkICsAulSNP1CQxDNiHSadqG7Oykrd5YdKbfknGNsUNSubQjFLyabZwK3VW9ymtwKPZ8m63yoao28I9B8gDdQeF/+xxV+D4khUaYA1yeqJWFEifmF9VGUOYBxmywxS6BHPHnQ4e9V2iXwECQQD4XCgWxhI3xzWbVxdFygg19Rgvv2qgIyzCY0Vjckp9KMFAatb6NA3HOz0NmVifdN9yLkdLE5baVGZKLWItnb/xAkEA3Tr/hM2Eck5dgohws0CnO/VdZ/3L4OuElgJ7XGfCJnViOZUU9lZ7KmMSi/XOZoZhnPR8vwd2yp229aY6hwnAVwJBAME5kccGGy5iQoa031pgsLqqEUM0vZQRScWCzn1sch+mEZQ4i0DmNsIGiJ2H7LdCioWfE8CJYRhECcE0ReoPjUECQBKISLNlS/0PV4IBz/8UIW5CZaq6dgPHdvniB1d8UaVLHAla1cC1CehJGFqlIr8v7qlpSbHu/CKJB7SYUjrRtE0CQHzehXqt1RYQjQbS10JsasF1ZCr3FUjMrrILwCEbpXIc1kFP7i7Y7HrYqpKILOqMqcmrbIfgaXEei+pJ1c4FM2c=";
-		String signature = signBySHA256WithRSA(privateKey, "test");
-		System.out.println(signature);
-		System.out.println(verifyBySHA256WithRSA(publicKey, "test", signature));
 	}
 
 }

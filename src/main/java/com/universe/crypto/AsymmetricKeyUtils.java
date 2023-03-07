@@ -11,8 +11,11 @@ import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -39,18 +42,6 @@ public class AsymmetricKeyUtils {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 
-	public static void main(String[] args) throws Exception {
-		String privateKey =
-			"MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAMPwibA1Z5saQuLsSnz1edglHJFiXzQZ5FxrHVLqiZHzIp176UjjGA+EeJEo+Nt9BiOGpeA0npycKiZtfgXQTND0gz87X3btzVcuB1w6MlcXh7OgzMtukdmzMx8hh7Sc2N6FhCSJO2FJYcFMTWqhbdj5TQZY0JZ7uQCigPLVR2VNAgMBAAECgYALBGppiwcxVG+wXMLvdcoNGkEZ96MMxevuOmOitudXWol2u3HplENVFAjHeLtNdCE1PCv1iF/mxG0mTf/JCeZXvETXlxTPF5o14uUvvEjqLKuvGRR/4D9NLd6SRygTvHO3itQzgOdoEFhWEjEKsj8R8R8K5DtrnCZX0GW836BVgQJBAOdCcR65gGCfNYSDWk1Thhi0rMLjL0RvXraB6MC5X8CklvFbrlGNuMFwHgPSPogZOfZPW3NZ+PtNRxwAKAdMWaECQQDY5sfdZvDlUVG6h+xtEX+I8TF4Btw7+fMFUu4luyo84EouQx2Qvwc8rd/2xo5PiLYQDW/B8Sw5fo3G3T0yoSQtAkAMzG2MQMHtFwKUOdzGiMfUGDOzeXVFOVCpkxj5iYjWFYXRB7znAIvoELdoiLszNwoxKoUqJiGUbttvnkaY2M3hAkBSGsn9XUJDDA1L9rfgcYc9Z0+6h55Gdc8wbLwJPFg4ww5RhMZkTGuI5Kiq2W51XOLOIMf1Oj3rZaR1aroHuEfhAkB3MQ0ms0oYvoZD+dbwjbA7irbNAxOI53+wkXXt2rbE/WgwusDH5bYhjpUfFt5VNFMsXiOnMyInsJ6iMwVG4Sn7";
-		String privateKeyInPkcs1 = transformPrivateKeyFromPkcs8ToPkcs1(privateKey);
-		String privateKeyInPkcs8 = transformPrivateKeyFromPkcs1ToPkcs8(privateKeyInPkcs1);
-
-		String privateKeyInPkcs8AsPem = formatKeyAsPemString(KeyFormat.RSA_PRIVATE_KEY_PKCS8, privateKeyInPkcs1);
-		System.out.println(privateKeyInPkcs8AsPem);
-		System.out.println(extractKeyFromPemString(privateKeyInPkcs8AsPem));
-		System.out.println(CryptoUtils.signBySHA256WithRSA(privateKeyInPkcs8, "test"));
-	}
-
 	/**
 	 * 格式化密钥为标准Pem格式
 	 * @param keyFormat 密钥格式，参考{@link KeyFormat}
@@ -72,11 +63,24 @@ public class AsymmetricKeyUtils {
 	/**
 	 * 从标准Pem格式中提取密钥
 	 * @param asymmetricKeyAsPem
-	 * @return 无---BEGIN---和---END---密钥字符串
+	 * @return 无---BEGIN---和---END---前后缀的密钥字符串
 	 * @throws IOException
 	 */
 	public static String extractKeyFromPemString(String asymmetricKeyAsPem) throws IOException {
 		try (PemReader pemReader = new PemReader(new StringReader(asymmetricKeyAsPem))) {
+			PemObject pemObject = pemReader.readPemObject();
+			return BASE64_ENCODER.encodeToString(pemObject.getContent());
+		}
+	}
+
+	/**
+	 * 从文件中提取密钥
+	 * @param pemFilePath
+	 * @return 无---BEGIN---和---END---前后缀的密钥字符串
+	 * @throws Exception
+	 */
+	public static String readKeyFromPath(String pemFilePath) throws Exception {
+		try (PemReader pemReader = new PemReader(new InputStreamReader(Files.newInputStream(Paths.get(pemFilePath))))) {
 			PemObject pemObject = pemReader.readPemObject();
 			return BASE64_ENCODER.encodeToString(pemObject.getContent());
 		}

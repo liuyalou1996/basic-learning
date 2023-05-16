@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ public abstract class JacksonUtils {
 		map.put("name", "Nick");
 		map.put("age", 26);
 		map.put("gender", null);
-		map.put("date", new Date());
+		map.put("date", LocalDateTime.now());
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.registerModule(new JavaTimeModule());

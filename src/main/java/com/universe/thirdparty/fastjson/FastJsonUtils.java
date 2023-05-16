@@ -1,15 +1,18 @@
 package com.universe.thirdparty.fastjson;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializeFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * json字符串与java bean转换工具类
@@ -99,6 +102,10 @@ public class FastJsonUtils {
 
   }
 
+  public static String toJsonStringWithKeyOrdered(Object obj) {
+    return toJsonString(beanToTreeMap(obj));
+  }
+
   /**
    * json字符串转bean
    * @param jsonStr json字符串
@@ -155,6 +162,38 @@ public class FastJsonUtils {
     return toMap(toJsonString(obj));
   }
 
+  public static Map<String, Object> beanToTreeMap(Object obj) {
+    if (Objects.isNull(obj)) {
+      return null;
+    }
+
+    return toTreeMap(toJsonString(obj));
+  }
+
+  public static Map<String, Object> toTreeMap(String jsonStr) {
+    if (StringUtils.isBlank(jsonStr)) {
+      return null;
+    }
+
+    JSONObject jsonObject = JSON.parseObject(jsonStr);
+    Map<String, Object> treeMap = new TreeMap<>();
+    addJsonObjectToTreeMap(treeMap, jsonObject);
+    return treeMap;
+  }
+
+  private static void addJsonObjectToTreeMap(Map<String, Object> treeMap, JSONObject jsonObject) {
+    jsonObject.forEach((key, value) -> {
+      if (value instanceof JSONObject) {
+        // 递归处理嵌套的 JSONObject
+        Map<String, Object> nestedSortedMap = new TreeMap<>(Comparator.naturalOrder());
+        addJsonObjectToTreeMap(nestedSortedMap, (JSONObject) value);
+        treeMap.put(key, nestedSortedMap);
+      } else {
+        treeMap.put(key, value);
+      }
+    });
+  }
+
   /**
    * map转bean
    * @param map
@@ -169,6 +208,11 @@ public class FastJsonUtils {
 
     String jsonStr = JSON.toJSONString(map);
     return JSON.parseObject(jsonStr, clazz);
+  }
+
+  public static void main(String[] args) {
+    String jsonString = "{\"key3\":{\"subKey2\":{\"subSubKey2\":\"value2\",\"subSubKey1\":\"value1\"},\"subKey1\":\"value1\"},\"key1\":\"value1\",\"key2\":\"value2\"}";
+    System.out.println(toPrettyJsonString(toTreeMap(jsonString)));
   }
 
 }

@@ -57,11 +57,12 @@ public class HttpClientUtils {
 	/**
 	 * 发送get请求
 	 * @param url 资源地址
+	 * @param headers 请求头
 	 * @param params 请求参数
 	 * @return
 	 * @throws Exception
 	 */
-	public static HttpClientResp sendGet(String url, Map<String, Object> params) throws Exception {
+	public static HttpClientResp sendGet(String url, Map<String, Object> headers, Map<String, Object> params) throws Exception {
 		URIBuilder uriBuilder = new URIBuilder(url);
 		if (!CollectionUtils.isEmpty(params)) {
 			for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -70,18 +71,21 @@ public class HttpClientUtils {
 		}
 
 		HttpGet httpGet = new HttpGet(uriBuilder.build());
+		setHeaders(httpGet, headers);
 		return getResponse(httpGet);
 	}
 
 	/**
 	 * 模拟表单发送post请求
 	 * @param url 资源地址
+	 * @param headers 请求头
 	 * @param params 请求参数
 	 * @return
 	 * @throws IOException
 	 */
-	public static HttpClientResp sendPostInHtmlForm(String url, Map<String, Object> params) throws IOException {
+	public static HttpClientResp sendPostInHtmlForm(String url, Map<String, Object> headers, Map<String, Object> params) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
+		setHeaders(httpPost, headers);
 		if (!CollectionUtils.isEmpty(params)) {
 			List<NameValuePair> formParams = new ArrayList<>();
 			for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -96,12 +100,14 @@ public class HttpClientUtils {
 	/**
 	 * 发送post请求，请求参数格式为json
 	 * @param url 资源地址
+	 * @param headers 请求头
 	 * @param jsonStr 请求参数json字符串
 	 * @return
 	 * @throws IOException
 	 */
-	public static HttpClientResp sendPostInJson(String url, String jsonStr) throws IOException {
+	public static HttpClientResp sendPostInJson(String url, Map<String, Object> headers, String jsonStr) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
+		setHeaders(httpPost, headers);
 		httpPost.setEntity(new StringEntity(jsonStr, ContentType.APPLICATION_JSON));
 		return getResponse(httpPost);
 	}

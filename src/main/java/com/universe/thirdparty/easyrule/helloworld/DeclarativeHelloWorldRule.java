@@ -10,6 +10,7 @@ import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 
 /**
+ * 声明式规则定义
  * @author Nick Liu
  * @date 2023/8/3
  */

@@ -267,6 +267,11 @@
             <artifactId>easy-rules-core</artifactId>
             <version>4.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.jeasy</groupId>
+            <artifactId>easy-rules-support</artifactId>
+            <version>4.1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

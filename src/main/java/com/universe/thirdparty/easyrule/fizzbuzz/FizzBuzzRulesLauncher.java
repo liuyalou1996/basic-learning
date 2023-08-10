@@ -13,7 +13,7 @@ import org.jeasy.rules.core.DefaultRulesEngine;
 public class FizzBuzzRulesLauncher {
 
 	public static void main(String[] args) {
-		// 如果第一条规则满足条件则跳过执行后面的规则
+		// 如果第一条规则满足条件且行为执行成功后则跳过执行后面的规则
 		RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
 		RulesEngine rulesEngine = new DefaultRulesEngine(parameters);
 

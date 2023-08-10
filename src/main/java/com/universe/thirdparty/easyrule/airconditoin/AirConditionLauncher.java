@@ -17,6 +17,7 @@ public class AirConditionLauncher {
 		Facts facts = new Facts();
 		facts.put("temperature", 30);
 
+		// 通过规则构建API定义规则
 		Rule rule = new RuleBuilder()
 			.name("Air Condition Rule")
 			.when(new HighTemperatureCondition())

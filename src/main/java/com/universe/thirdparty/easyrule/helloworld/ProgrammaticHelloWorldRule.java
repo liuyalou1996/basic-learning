@@ -29,12 +29,15 @@ public class ProgrammaticHelloWorldRule implements Rule {
 	}
 
 	public static void main(String[] args) {
+		// 定义事实
 		Facts facts = new Facts();
 		facts.put("enabled", true);
 
+		// 注册编程式规则
 		Rules rules = new Rules();
 		rules.register(new ProgrammaticHelloWorldRule());
 
+		// 使用默认规则引擎根据事实触发规则
 		RulesEngine rulesEngine = new DefaultRulesEngine();
 		rulesEngine.fire(rules, facts);
 	}

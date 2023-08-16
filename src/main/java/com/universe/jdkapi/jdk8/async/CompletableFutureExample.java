@@ -24,7 +24,6 @@ public class CompletableFutureExample {
 					return null;
 				}
 			);
-
 		TimeUnit.SECONDS.sleep(1);
 	}
 

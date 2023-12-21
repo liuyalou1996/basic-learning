@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * @author 刘亚楼
  * @date 2020/6/18
  */
-public class HttpClientUtils {
+public abstract class HttpClientUtils {
 
 	private static final HttpClient DEFAULT_CLIENT;
 
@@ -49,8 +49,8 @@ public class HttpClientUtils {
 		connectionManager.setMaxTotal(500);
 		// 每个路由(即ip+端口)最大连接数，默认为2
 		connectionManager.setDefaultMaxPerRoute(50);
-		RequestConfig requestConfig =
-			RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(5000).setConnectionRequestTimeout(1000).build();
+		// 设置连接超时时长为3秒，网络请求超时时长为5秒，从连接池获取连接超时时长为1秒
+		RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(5000).setConnectionRequestTimeout(1000).build();
 		DEFAULT_CLIENT = HttpClients.custom().setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfig).build();
 	}
 
@@ -62,7 +62,7 @@ public class HttpClientUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static HttpClientResp sendGet(String url, Map<String, Object> headers, Map<String, Object> params) throws Exception {
+	public static HttpClientResp get(String url, Map<String, Object> headers, Map<String, Object> params) throws Exception {
 		URIBuilder uriBuilder = new URIBuilder(url);
 		if (!CollectionUtils.isEmpty(params)) {
 			for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -83,7 +83,7 @@ public class HttpClientUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static HttpClientResp sendPostInHtmlForm(String url, Map<String, Object> headers, Map<String, Object> params) throws IOException {
+	public static HttpClientResp postInHtmlForm(String url, Map<String, Object> headers, Map<String, Object> params) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
 		setHeaders(httpPost, headers);
 		if (!CollectionUtils.isEmpty(params)) {
@@ -105,7 +105,7 @@ public class HttpClientUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static HttpClientResp sendPostInJson(String url, Map<String, Object> headers, String jsonStr) throws IOException {
+	public static HttpClientResp postInJson(String url, Map<String, Object> headers, String jsonStr) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
 		setHeaders(httpPost, headers);
 		httpPost.setEntity(new StringEntity(jsonStr, ContentType.APPLICATION_JSON));

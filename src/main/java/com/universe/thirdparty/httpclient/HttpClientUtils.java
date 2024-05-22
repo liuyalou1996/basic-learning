@@ -1,13 +1,10 @@
 package com.universe.thirdparty.httpclient;
 
 import com.universe.thirdparty.fastjson.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.http.Consts;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -25,7 +22,9 @@ import org.apache.http.message.AbstractHttpMessage;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,6 +109,20 @@ public abstract class HttpClientUtils {
 		setHeaders(httpPost, headers);
 		httpPost.setEntity(new StringEntity(jsonStr, ContentType.APPLICATION_JSON));
 		return getResponse(httpPost);
+	}
+
+	public static InputStream download(String url) throws Exception {
+		URIBuilder uriBuilder = new URIBuilder(url);
+		HttpGet httpGet = new HttpGet(uriBuilder.build());
+		try (CloseableHttpResponse response = (CloseableHttpResponse) DEFAULT_CLIENT.execute(httpGet, HttpClientContext.create())) {
+			int statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode >= HttpStatus.SC_OK && statusCode < HttpStatus.SC_MULTIPLE_CHOICES) {
+				HttpEntity httpEntity = response.getEntity();
+				byte[] content = IOUtils.toByteArray(httpEntity.getContent());
+				return new ByteArrayInputStream(content);
+			}
+			throw new IllegalStateException("Invalid response code!");
+		}
 	}
 
 	public static void setHeaders(AbstractHttpMessage message, Map<String, Object> headers) {

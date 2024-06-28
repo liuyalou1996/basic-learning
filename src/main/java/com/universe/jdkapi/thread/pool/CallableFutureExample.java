@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * Future：代表异步计算的结果，提供的方法用来检查计算是否完成，完成则可通过get方法检索计算结果，否则get方法将会阻塞。通过cancel方法可取消，一旦任务完成，则不能取消。<br/>
@@ -35,7 +36,11 @@ public class CallableFutureExample {
 		CompletionService<Integer> service = new ExecutorCompletionService<>(executor);
 		for (int count = 0; count < 10; count++) {
 			int taskId = count + 1;
-			service.submit(() -> taskId);
+			service.submit(() -> {
+				int randomTimeout = new Random().nextInt(10);
+				LockSupport.parkNanos(randomTimeout * 1000 * 1000 * 1000L);
+				return taskId;
+			});
 		}
 		for (int count = 0; count < 10; count++) {
 			// 根据完成的顺序取出结果

@@ -169,9 +169,7 @@ public abstract class EasyExcelUtils {
 	 */
 	public static <T> void fillSheet(OutputStream dest, InputStream template, List<T> content, int sheetNo) {
 		validateParams(sheetNo);
-		Class<?> clazz = content.get(0).getClass();
-		// 填充时不写入头部信息
-		EasyExcel.write(dest).head(clazz).withTemplate(template).needHead(false).sheet(sheetNo - 1).doWrite(content);
+		EasyExcel.write(dest).withTemplate(template).sheet(sheetNo - 1).doFill(content);
 	}
 
 

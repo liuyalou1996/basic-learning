@@ -210,6 +210,29 @@ public class BigDecimalUtils {
 		return dividend.divide(divisor, scale, roundingMode == null ? DEFAULT_ROUNDING_MODE : roundingMode);
 	}
 
+	public static BigDecimal max(BigDecimal first, BigDecimal second) {
+		return first != null && second != null ? first.max(second) : null;
+	}
+
+	public static BigDecimal min(BigDecimal first, BigDecimal second) {
+		return first != null && second != null ? first.min(second) : null;
+	}
+
+	public static boolean greaterThan(BigDecimal first, BigDecimal second) {
+		return first != null && second != null && first.compareTo(second) > 0;
+	}
+
+	public static boolean greaterEqualThan(BigDecimal first, BigDecimal second) {
+		return first != null && second != null && first.compareTo(second) >= 0;
+	}
+
+	public static boolean lessThan(BigDecimal first, BigDecimal second) {
+		return first != null && second != null && first.compareTo(second) < 0;
+	}
+
+	public static boolean lessEqualThan(BigDecimal first, BigDecimal second) {
+		return first != null && second != null && first.compareTo(second) <= 0;
+	}
 
 
 }

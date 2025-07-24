@@ -1,4 +1,4 @@
-package com.universe.thirdparty.comparator.custom;
+package com.universe.thirdparty.comparator.core;
 
 import java.util.List;
 

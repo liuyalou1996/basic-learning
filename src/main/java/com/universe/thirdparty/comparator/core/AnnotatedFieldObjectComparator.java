@@ -1,6 +1,6 @@
-package com.universe.thirdparty.comparator.custom;
+package com.universe.thirdparty.comparator.core;
 
-import com.universe.thirdparty.comparator.FieldComparable;
+import com.universe.thirdparty.comparator.annotation.FieldComparable;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
@@ -18,6 +18,6 @@ public class AnnotatedFieldObjectComparator extends FieldBasedObjectComparator {
 		Field secondField = comparableField.getCurrentField();
 		boolean isFirstComparablePresent = Optional.ofNullable(fistField).map(f -> f.isAnnotationPresent(FieldComparable.class)).orElse(false);
 		boolean isSecondComparablePresent = Optional.ofNullable(secondField).map(f -> f.isAnnotationPresent(FieldComparable.class)).orElse(false);
-		return super.isIncluded(comparableField) || (isFirstComparablePresent && isSecondComparablePresent);
+		return super.isIncluded(comparableField) && (isFirstComparablePresent && isSecondComparablePresent);
 	}
 }

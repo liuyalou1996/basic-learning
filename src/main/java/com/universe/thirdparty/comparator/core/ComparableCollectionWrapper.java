@@ -1,5 +1,6 @@
-package com.universe.thirdparty.comparator.custom;
+package com.universe.thirdparty.comparator.core;
 
+import com.universe.thirdparty.comparator.annotation.FieldComparable;
 import lombok.Data;
 
 import java.util.*;
@@ -11,6 +12,7 @@ import java.util.*;
 @Data
 public class ComparableCollectionWrapper<T> {
 
+	@FieldComparable
 	private Collection<T> collection;
 
 	/**

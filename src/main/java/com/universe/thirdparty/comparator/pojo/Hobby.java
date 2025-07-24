@@ -1,4 +1,4 @@
-package com.universe.thirdparty.comparator.custom.pojo;
+package com.universe.thirdparty.comparator.pojo;
 
 import lombok.*;
 

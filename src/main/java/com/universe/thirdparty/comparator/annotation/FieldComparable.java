@@ -1,4 +1,4 @@
-package com.universe.thirdparty.comparator;
+package com.universe.thirdparty.comparator.annotation;
 
 import java.lang.annotation.*;
 

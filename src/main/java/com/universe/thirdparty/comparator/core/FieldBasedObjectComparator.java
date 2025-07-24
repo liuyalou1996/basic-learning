@@ -1,4 +1,8 @@
-package com.universe.thirdparty.comparator.custom;
+package com.universe.thirdparty.comparator.core;
+
+import com.universe.thirdparty.comparator.annotation.FieldFormatter;
+import com.universe.thirdparty.comparator.ext.FieldNameFormatter;
+import com.universe.thirdparty.comparator.ext.FieldValueFormatter;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -37,20 +41,35 @@ public class FieldBasedObjectComparator extends AbstractObjectComparator {
 			try {
 				Field previousField = previousFields.getOrDefault(fieldName, null);
 				Field currentField = currentFields.getOrDefault(fieldName, null);
-				Object previousVal = null;
 				Class<?> previousType = null;
 				Class<?> currentType = null;
+				Object previousVal = null;
 				Object currentVal = null;
+				Class<? extends FieldNameFormatter> preNameFormatterType = null;
+				Class<? extends FieldValueFormatter> preValueFormatterType = null;
+				Class<? extends FieldNameFormatter> curNameFormatterType = null;
+				Class<? extends FieldValueFormatter> curValueFormatterType = null;
 				if (previousField != null) {
 					previousField.setAccessible(true);
 					previousVal = previousField.get(previous);
 					previousType = previousField.getType();
+					if (previousField.isAnnotationPresent(FieldFormatter.class)) {
+						FieldFormatter fieldFormatter = previousField.getAnnotation(FieldFormatter.class);
+						preNameFormatterType = fieldFormatter.nameFormatter();
+						preValueFormatterType = fieldFormatter.valueFormatter();
+					}
 				}
 				if (currentField != null) {
 					currentField.setAccessible(true);
 					currentVal = currentField.get(current);
 					currentType = currentField.getType();
+					if (currentField.isAnnotationPresent(FieldFormatter.class)) {
+						FieldFormatter fieldFormatter = currentField.getAnnotation(FieldFormatter.class);
+						curNameFormatterType = fieldFormatter.nameFormatter();
+						curValueFormatterType = fieldFormatter.valueFormatter();
+					}
 				}
+
 				ComparableField field = new ComparableField();
 				field.setFieldName(fieldName);
 				field.setPreviousFieldType(previousType);
@@ -62,7 +81,20 @@ public class FieldBasedObjectComparator extends AbstractObjectComparator {
 				if (!isFieldEqual(field)) {
 					diffFields.add(field);
 				}
-			} catch (IllegalAccessException e) {
+				Class<? extends FieldNameFormatter> nameFormatterType = preNameFormatterType == null ? curNameFormatterType : preNameFormatterType;
+				if (nameFormatterType != null) {
+					FieldNameFormatter fieldNameFormatter = nameFormatterType.newInstance();
+					field.setFieldName(fieldNameFormatter.format(fieldName));
+				}
+				if (preValueFormatterType != null) {
+					FieldValueFormatter previousValueFormatter = preValueFormatterType.newInstance();
+					field.setPreviousFieldValue(previousValueFormatter.format(previousVal));
+				}
+				if (curValueFormatterType != null) {
+					FieldValueFormatter currentValueFormatter = curValueFormatterType.newInstance();
+					field.setCurrentFieldValue(currentValueFormatter.format(currentVal));
+				}
+			} catch (Exception e) {
 				throw new IllegalStateException("Unable to compare field: " + fieldName, e);
 			}
 		}

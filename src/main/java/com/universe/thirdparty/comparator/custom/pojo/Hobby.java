@@ -2,6 +2,8 @@ package com.universe.thirdparty.comparator.custom.pojo;
 
 import lombok.*;
 
+import java.util.Comparator;
+
 /**
  * @author Nick Liu
  * @date 2025/7/22
@@ -10,8 +12,13 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Hobby {
+public class Hobby implements Comparable<Hobby>{
 
 	private String name;
 	private String desc;
+
+	@Override
+	public int compareTo(Hobby o) {
+		return Comparator.comparing(Hobby::getName).thenComparing(Hobby::getDesc).compare(this, o);
+	}
 }

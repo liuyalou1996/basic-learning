@@ -3,8 +3,7 @@ package com.universe.thirdparty.comparator.custom;
 import com.google.common.collect.Lists;
 import com.universe.thirdparty.comparator.custom.pojo.*;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Nick Liu
@@ -19,6 +18,17 @@ public class AnnotatedComparatorExample {
 
 		AnnotatedFieldObjectComparator comparator = new AnnotatedFieldObjectComparator();
 		List<ComparableField> fields = comparator.getDiffFields(userDTO, userDO);
+		printResult(fields);
+
+		List<Hobby> orgHobbies = Lists.newArrayList(new Hobby("Sing", "唱歌"), new Hobby("Dance", "跳舞"));
+		List<Hobby> curHobbies = Lists.newArrayList(new Hobby("Dance", "跳舞"), new Hobby("Sing", "唱歌"));
+		ComparableCollectionWrapper<Hobby> orgWrapper = new ComparableCollectionWrapper<>(orgHobbies);
+		ComparableCollectionWrapper<Hobby> curWrapper = new ComparableCollectionWrapper<>(curHobbies);
+		fields = comparator.getDiffFields(orgWrapper, curWrapper);
+		printResult(fields);
+	}
+
+	private static void printResult(List<ComparableField> fields) {
 		fields.forEach(field -> {
 			System.out.println("======字段比较开始=====");
 			System.out.println("字段名称:" + field.getFieldName());

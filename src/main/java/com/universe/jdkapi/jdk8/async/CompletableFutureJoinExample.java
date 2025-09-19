@@ -32,7 +32,8 @@ public class CompletableFutureJoinExample {
 
 	private static void accept(CompletableFuture<Boolean> future) {
 		try {
-			System.out.println("运行结果:" + future.get());
+			// 也可使用future.get()方法
+			System.out.println("运行结果:" + future.join());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

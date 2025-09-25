@@ -31,9 +31,9 @@ public abstract class SnowFlakeUtils {
 	/**
 	 * 每一部分的最大值
 	 */
-	private final static long MAX_DATACENTER_NUM = -1L ^ (-1L << DATACENTER_BIT);
-	private final static long MAX_MACHINE_NUM = -1L ^ (-1L << MACHINE_BIT);
-	private final static long MAX_SEQUENCE = -1L ^ (-1L << SEQUENCE_BIT);
+	private final static long MAX_DATACENTER_NUM = ~(-1L << DATACENTER_BIT);
+	private final static long MAX_MACHINE_NUM = ~(-1L << MACHINE_BIT);
+	private final static long MAX_SEQUENCE = ~(-1L << SEQUENCE_BIT);
 
 	/**
 	 * 每一部分向左的位移
@@ -45,18 +45,28 @@ public abstract class SnowFlakeUtils {
 	private static long datacenterId;  //数据中心
 	private static long machineId;     //机器标识
 	private static long sequence = 0L; //序列号
-	private static long lastStmp = -1L;//上一次时间戳
+	private static long lastTimestamp = -1L;//上一次时间戳
 
 	static {
 		try {
 			InetAddress inetAddress = InetAddress.getLocalHost();
 			String hostName = inetAddress.getHostName();
 			String hostAddress = inetAddress.getHostAddress();
-			datacenterId = Arrays.stream(StringUtils.toCodePoints(hostName)).sum();
-			machineId = Arrays.stream(StringUtils.toCodePoints(hostAddress)).sum();
+			datacenterId = MAX_DATACENTER_NUM & Arrays.stream(StringUtils.toCodePoints(hostName)).sum();
+			machineId = MAX_MACHINE_NUM & Arrays.stream(StringUtils.toCodePoints(hostAddress)).sum();
 		} catch (UnknownHostException e) {
 			LOGGER.error("Fail to generate snowflake id:{}", e.getMessage());
 		}
+	}
+
+	public static synchronized String nextStrId() {
+		return String.valueOf(nextId());
+	}
+
+	public static void main(String[] args) {
+		System.out.println(MAX_DATACENTER_NUM);
+		System.out.println(MAX_MACHINE_NUM);
+		System.out.println(MAX_SEQUENCE);
 	}
 
 	/**
@@ -65,40 +75,40 @@ public abstract class SnowFlakeUtils {
 	 * @return
 	 */
 	public static synchronized long nextId() {
-		long currStmp = getNewstmp();
-		if (currStmp < lastStmp) {
+		long currentTimestamp = getCurrentTimestamp();
+		if (currentTimestamp < lastTimestamp) {
 			throw new RuntimeException("Clock moved backwards.  Refusing to generate id");
 		}
 
-		if (currStmp == lastStmp) {
+		if (currentTimestamp == lastTimestamp) {
 			//相同毫秒内，序列号自增
 			sequence = (sequence + 1) & MAX_SEQUENCE;
 			//同一毫秒的序列数已经达到最大
 			if (sequence == 0L) {
-				currStmp = getNextMill();
+				currentTimestamp = getNextMill();
 			}
 		} else {
 			//不同毫秒内，序列号置为0
 			sequence = 0L;
 		}
 
-		lastStmp = currStmp;
+		lastTimestamp = currentTimestamp;
 
-		return (currStmp - START_STMP) << TIMESTMP_LEFT //时间戳部分
+		return (currentTimestamp - START_STMP) << TIMESTMP_LEFT //时间戳部分
 			| datacenterId << DATACENTER_LEFT       //数据中心部分
 			| machineId << MACHINE_LEFT             //机器标识部分
 			| sequence;                             //序列号部分
 	}
 
 	private static long getNextMill() {
-		long mill = getNewstmp();
-		while (mill <= lastStmp) {
-			mill = getNewstmp();
+		long mill = getCurrentTimestamp();
+		while (mill <= lastTimestamp) {
+			mill = getCurrentTimestamp();
 		}
 		return mill;
 	}
 
-	private static long getNewstmp() {
+	private static long getCurrentTimestamp() {
 		return System.currentTimeMillis();
 	}
 

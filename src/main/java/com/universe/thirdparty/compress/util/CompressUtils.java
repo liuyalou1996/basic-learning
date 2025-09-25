@@ -5,6 +5,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
@@ -17,7 +18,9 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 刘亚楼
@@ -38,6 +41,11 @@ public abstract class CompressUtils {
 	public static void compressToZip(List<File> filesToArchive, String target) throws IOException {
 		AbstractCompressor abstractCompressor = new ZipCompressorFactory().newCompressor();
 		abstractCompressor.compress(filesToArchive, target);
+	}
+
+	public static void compressToZip(Map<String, InputStream> filesToArchive, OutputStream outputStream) throws IOException {
+		AbstractCompressor abstractCompressor = new ZipCompressorFactory().newCompressor();
+		abstractCompressor.compress(filesToArchive, outputStream);
 	}
 
 	public static void compressToGzip(List<File> filesToArchive, String target) throws IOException {
@@ -101,6 +109,19 @@ public abstract class CompressUtils {
 			}
 		}
 
+		public void compress(Map<String, InputStream> filesToArchive, OutputStream outputStream) throws IOException {
+			try (ArchiveOutputStream zipOs = createArchiveOutputStream(outputStream)) {
+				for (Map.Entry<String, InputStream> entry : filesToArchive.entrySet()) {
+					String fileName = entry.getKey();
+					InputStream source = entry.getValue();
+					ZipArchiveEntry zipEntry = new ZipArchiveEntry(fileName);
+					zipOs.putArchiveEntry(zipEntry);
+					IOUtils.copy(source, zipOs);
+					zipOs.closeArchiveEntry();
+				}
+			}
+		}
+
 		protected abstract ArchiveOutputStream createArchiveOutputStream(OutputStream os) throws IOException;
 	}
 
@@ -137,6 +158,10 @@ public abstract class CompressUtils {
 			CompressorOutputStream cos = new GzipCompressorOutputStream(os);
 			return new TarArchiveOutputStream(cos, StandardCharsets.UTF_8.name());
 		}
+	}
+
+	public static void main(String[] args) {
+		Map<String, InputStream> filesToArchive = new HashMap<>();
 	}
 
 }

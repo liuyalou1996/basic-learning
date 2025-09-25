@@ -1,5 +1,6 @@
 package com.universe.thirdparty.compress;
 
+import com.universe.thirdparty.compress.util.CompressUtils;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream;
@@ -13,10 +14,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 刘亚楼
@@ -46,6 +51,7 @@ public class CompressExample {
 				}
 				zipOs.closeArchiveEntry();
 			}
+			zipOs.finish();
 		}
 	}
 
@@ -60,6 +66,7 @@ public class CompressExample {
 				}
 				jarOs.closeArchiveEntry();
 			}
+			jarOs.finish();
 		}
 	}
 
@@ -74,6 +81,7 @@ public class CompressExample {
 				}
 				tarOs.closeArchiveEntry();
 			}
+			tarOs.finish();
 		}
 	}
 
@@ -89,11 +97,19 @@ public class CompressExample {
 				}
 				gzipOs.closeArchiveEntry();
 			}
+			gzipOs.finish();
 		}
 	}
 
 
 	public static void main(String[] args) throws IOException {
-		compressToJarFormat();
+		Map<String, InputStream> files2Archive = new HashMap<>();
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(BASE_PATH))) {
+			for (Path path : directoryStream) {
+				files2Archive.put(path.getFileName().toString(), Files.newInputStream(path));
+			}
+		}
+		OutputStream os = Files.newOutputStream(Paths.get(BASE_PATH, "archive.zip"));
+		CompressUtils.compressToZip(files2Archive, os);
 	}
 }

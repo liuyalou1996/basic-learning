@@ -6,6 +6,7 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.universe.jdkapi.jdk8.datetime.DateTimeUtils;
 import com.universe.jdkapi.jdk8.datetime.DateTimeUtils.Pattern;
 import com.universe.thirdparty.easyexcel.example.entity.Student;
+import com.universe.thirdparty.easyexcel.example.handler.StyledRowHandler;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -15,8 +16,7 @@ import java.util.List;
 
 public class WriteExcelExample {
 
-	private static final String BASE_PATH =
-		System.getProperty("user.home") + File.separator + "test" + File.separator + "easyexcel";
+	private static final String BASE_PATH = System.getProperty("user.home") + File.separator + "easyexcel";
 
 	private static List<Student> studentList = new ArrayList<>();
 
@@ -71,7 +71,12 @@ public class WriteExcelExample {
 		File template = new File(BASE_PATH, "student-fill-template.xlsx");
 		File dest = new File(BASE_PATH, generateFileName());
 		// 写入列表时占位符要加点，如{.name}
-		EasyExcel.write(dest).withTemplate(template).sheet().doFill(studentList);
+		EasyExcel.write(dest)
+			.withTemplate(template)
+			.head(Student.class)
+			.registerWriteHandler(new StyledRowHandler("姓名"))
+			.sheet()
+			.doFill(studentList);
 	}
 
 	private static String generateFileName() {

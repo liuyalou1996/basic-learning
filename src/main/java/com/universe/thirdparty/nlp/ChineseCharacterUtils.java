@@ -83,13 +83,14 @@ public abstract class ChineseCharacterUtils {
 	}
 
 	public static void main(String[] args) {
-		String chineseText = "刘亚楼";
-		String traditionalChineseText = "刘亚楼";
+		String chineseText = "刘 亚楼";
+		String traditionalChineseText = "劉亞樓";
 		System.out.println("中文转拼音: " + toPinYin(chineseText));
 		System.out.println("中文转拼音: " + toUpperCasePinYin(chineseText));
 		System.out.println("中文转拼音(首个拼音分隔): " + toPinYinWithFirstSeparated(chineseText, StringUtils.SPACE));
 		System.out.println("中文转大写拼音(首个拼音分隔): " + toUpperCasePinYinWithFirstSeparated(chineseText, StringUtils.SPACE));
 		System.out.println("简体中文转繁体: " + toTraditionalChinese(chineseText));
 		System.out.println("繁体中文转简体: " + toSimplifiedChinese(traditionalChineseText));
+		System.out.println("繁体中文转拼音(首个拼音分隔): " + toPinYinWithFirstSeparated(traditionalChineseText, StringUtils.SPACE));
 	}
 }
